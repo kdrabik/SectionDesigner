@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Window
+	x:Class="SectionDesigner.Views.MainWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	Title="SectionDesigner"
+	Height="600"
+	Width="800">
+	<TabControl>
+		<TabItem
+			Header="Materials"
+			x:Name="MatSet">
+			<StackPanel>
+				<TextBox
+					Name="InputTextBox"
+					Text="{Binding Section.Size, UpdateSourceTrigger=PropertyChanged}"
+					Width="100"
+					RenderTransformOrigin="0,5"></TextBox>
+				<TextBox
+					Name="OutputTextBox"
+					Text="{Binding Section.SizeComputed, UpdateSourceTrigger=PropertyChanged}"
+					Width="100"
+					RenderTransformOrigin="0,5"></TextBox>
+				<!--  <Button Command ="{Binding UpdateCommand}" IsDefault="{Binding ElementName=InputTextBox, Path=IsKeyboardFocused}">Update</Button> -->
+			</StackPanel>
+		</TabItem>
+		<TabItem
+			Header="Geometry"
+			x:Name="Geometry">
+			<StackPanel
+				Height="500" Orientation="Horizontal">
+				<DataGrid
+					Height="400"
+					Width="250"
+					HorizontalAlignment="Left"
+					VerticalAlignment="Center"></DataGrid>
+				<Canvas
+					Height="400"
+					Width="250"
+					HorizontalAlignment="Right"
+					VerticalAlignment="Center"></Canvas>
+			</StackPanel>
+		</TabItem>
+		<TabItem
+			Header="Reinforcement"
+			x:Name="Rebar"></TabItem>
+		<TabItem
+			Header="Loads"
+			x:Name="Loads"></TabItem>
+		<TabItem
+			Header="Results"
+			x:Name="Results"></TabItem>
+	</TabControl>
+</Window>
