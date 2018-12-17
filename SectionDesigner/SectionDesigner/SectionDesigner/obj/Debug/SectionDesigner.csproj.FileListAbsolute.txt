@@ -1,0 +1,13 @@
+C:\Users\mo051075\Desktop\SD\SectionDesigner\SectionDesigner\obj\Debug\SectionDesigner.csprojResolveAssemblyReference.cache
+C:\Users\mo051075\Desktop\SD\SectionDesigner\SectionDesigner\obj\Debug\App.g.cs
+C:\Users\mo051075\Desktop\SD\SectionDesigner\SectionDesigner\obj\Debug\SectionDesigner_MarkupCompile.cache
+C:\Users\mo051075\Desktop\SD\SectionDesigner\SectionDesigner\obj\Debug\Views\MainWindow.baml
+C:\Users\mo051075\Desktop\SD\SectionDesigner\SectionDesigner\obj\Debug\Views\MainWindow.g.cs
+C:\Users\mo051075\Desktop\SD\SectionDesigner\SectionDesigner\obj\Debug\SectionDesigner.g.resources
+C:\Users\mo051075\Desktop\SD\SectionDesigner\SectionDesigner\bin\Debug\SectionDesigner.exe.config
+C:\Users\mo051075\Desktop\SD\SectionDesigner\SectionDesigner\bin\Debug\SectionDesigner.exe
+C:\Users\mo051075\Desktop\SD\SectionDesigner\SectionDesigner\bin\Debug\SectionDesigner.pdb
+C:\Users\mo051075\Desktop\SD\SectionDesigner\SectionDesigner\obj\Debug\SectionDesigner.exe
+C:\Users\mo051075\Desktop\SD\SectionDesigner\SectionDesigner\obj\Debug\SectionDesigner.pdb
+C:\Users\mo051075\Desktop\SD\SectionDesigner\SectionDesigner\obj\Debug\Views\MainWindowResources.baml
+C:\Users\mo051075\Desktop\SD\SectionDesigner\SectionDesigner\obj\Debug\Views\MainWindowResources.g.cs
