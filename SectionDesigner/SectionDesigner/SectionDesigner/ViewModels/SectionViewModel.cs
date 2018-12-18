@@ -4,12 +4,13 @@
 	using System.Windows.Input;
 	using SectionDesigner.Models;
 	using SectionDesigner.Commands;
+	using Majstersztyk;
 	using System.ComponentModel;
 
 	internal class SectionViewModel
 	{
 		public SectionViewModel() {
-			_Section = new Section(2);
+			_Section = Creator.ReadSection();
 			UpdateCommand = new SectionUpdateCommand(this);
 		}
 		
@@ -18,13 +19,13 @@
 				if (Section == null) {
 					return false;
 				}
-				return !String.IsNullOrEmpty(Convert.ToString(Section.Size));
+				return true;
 			}
 			//set;
 		}
 		
-		private Section _Section;
-		public Section Section {
+		private TS_section _Section;
+		public TS_section Section {
 			get {
 				return _Section;
 			}

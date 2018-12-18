@@ -72,6 +72,12 @@
 		<TabItem
 			Header="Section"
 			x:Name="Section">
+			<TabControl
+				x:Name="SectionProp">
+				<TabItem
+				Header="Contour"
+				x:Name="Contour"></TabItem>
+			</TabControl>
 		</TabItem>
 		<TabItem
 			Header="Reinforcement"
