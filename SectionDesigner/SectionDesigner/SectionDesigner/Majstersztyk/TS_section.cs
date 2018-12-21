@@ -18,7 +18,8 @@ namespace Majstersztyk
 	public class TS_section:TS_region
 	{
 		public List<TS_part> Parts { get; private set; }
-        public List<TS_reinforcement> Reinforcement { get; private set; }
+        public List<TS_reinforcement> ReinforcementEntire { get; private set; }
+		public List<TS_reinforcement> ReinforcementFree { get; private set; }
 
         public override string TypeOf { get { return typeOf; } }
         private string typeOf = "Section";
@@ -33,7 +34,7 @@ namespace Majstersztyk
         */
         public TS_section() {
             Parts = new List<TS_part>();
-            Reinforcement = new List<TS_reinforcement>();
+            ReinforcementEntire = new List<TS_reinforcement>();
         }
 				
 		public TS_section(List<TS_part> parts, List<TS_reinforcement> reinforcement)
@@ -44,7 +45,8 @@ namespace Majstersztyk
         public void Update(List<TS_part> parts, List<TS_reinforcement> reinforcement)
         {
             Parts = parts;
-            Reinforcement = reinforcement;
+            ReinforcementEntire = reinforcement;
+			SeperateReinforcementForParts();
             CalcProperties();
         }
         
@@ -56,9 +58,12 @@ namespace Majstersztyk
             foreach (TS_part Part in Parts)
             {
                 area += Part.Area * Part.Material.E / E0;
+                foreach (var Reo in Part.BelongingReinforcement) {
+					area += Reo.Area * (Reo.Material.E - Part.Material.E) / E0;
+                }
             }
 
-            foreach (TS_reinforcement Reo_group in Reinforcement) {
+            foreach (TS_reinforcement Reo_group in ReinforcementFree) {
                 area += Reo_group.Area * Reo_group.Material.E / E0;
             }
             return area;
@@ -72,9 +77,12 @@ namespace Majstersztyk
             foreach (TS_part Part in Parts)
             {
                 sx += Part.StaticMomX * Part.Material.E / E0;
+                foreach (var Reo in Part.BelongingReinforcement) {
+					sx += Reo.StaticMomX * (Reo.Material.E - Part.Material.E) / E0;
+                }
             }
 
-            foreach (TS_reinforcement Reo_group in Reinforcement) {
+            foreach (TS_reinforcement Reo_group in ReinforcementFree) {
                 sx += Reo_group.StaticMomX * Reo_group.Material.E / E0;
             }
             return sx;
@@ -88,9 +96,12 @@ namespace Majstersztyk
             foreach (TS_part Part in Parts)
             {
                 sy += Part.StaticMomY * Part.Material.E / E0;
+                foreach (var Reo in Part.BelongingReinforcement) {
+					sy += Reo.StaticMomY * (Reo.Material.E - Part.Material.E) / E0;
+                }
             }
 
-            foreach (TS_reinforcement Reo_group in Reinforcement) {
+            foreach (TS_reinforcement Reo_group in ReinforcementFree) {
                 sy += Reo_group.StaticMomY * Reo_group.Material.E / E0;
             }
             return sy;
@@ -104,9 +115,12 @@ namespace Majstersztyk
             foreach (TS_part Part in Parts)
             {
                 ix += Part.InertiaMomX * Part.Material.E / E0;
+                foreach (var Reo in Part.BelongingReinforcement) {
+					ix += Reo.InertiaMomX * (Reo.Material.E - Part.Material.E) / E0;
+                }
             }
 
-            foreach (TS_reinforcement Reo_group in Reinforcement) {
+            foreach (TS_reinforcement Reo_group in ReinforcementFree) {
                 ix += Reo_group.InertiaMomX * Reo_group.Material.E / E0;
             }
             return ix;
@@ -120,9 +134,12 @@ namespace Majstersztyk
             foreach (TS_part Part in Parts)
             {
                 iy += Part.InertiaMomX * Part.Material.E / E0;
+                foreach (var Reo in Part.BelongingReinforcement) {
+					iy += Reo.InertiaMomY * (Reo.Material.E - Part.Material.E) / E0;
+                }
             }
 
-            foreach (TS_reinforcement Reo_group in Reinforcement) {
+            foreach (TS_reinforcement Reo_group in ReinforcementFree) {
                 iy += Reo_group.InertiaMomY * Reo_group.Material.E / E0;
             }
             return iy;
@@ -136,9 +153,12 @@ namespace Majstersztyk
             foreach (TS_part Part in Parts)
             {
                 ixy += Part.DeviationMomXY * Part.Material.E / Parts[0].Material.E;
+                foreach (var Reo in Part.BelongingReinforcement) {
+					ixy += Reo.DeviationMomXY * (Reo.Material.E - Part.Material.E) / E0;
+                }
             }
 
-            foreach (TS_reinforcement Reo_group in Reinforcement) {
+            foreach (TS_reinforcement Reo_group in ReinforcementFree) {
                 ixy += Reo_group.DeviationMomXY * Reo_group.Material.E / E0;
             }
             return ixy;
@@ -148,23 +168,27 @@ namespace Majstersztyk
             double centrx = 0;
             double centry = 0;
             double centrxy = 0;
+            double E0 = Parts[0].Material.E;
 
             foreach (var Part in Parts) {
                 centrx += (Part.InertiaMomX - Math.Pow(Centroid.Y, 2) * Part.Area) 
-                    * Part.Material.E / Parts[0].Material.E;
+                    * Part.Material.E / E0;
                 centry += (Part.InertiaMomY - Math.Pow(Centroid.X, 2) * Part.Area) 
-                    * Part.Material.E / Parts[0].Material.E;
+                    * Part.Material.E / E0;
                 centrxy += (Part.DeviationMomXY - (Centroid.X * Centroid.Y) * Part.Area) 
-                    * Part.Material.E / Parts[0].Material.E;
+                    * Part.Material.E / E0;
+                
+                foreach (var Reo in Part.BelongingReinforcement) {
+                	centrx += (Reo.InertiaMomX - Math.Pow(Centroid.Y, 2) * Reo.Area) * (Reo.Material.E - Part.Material.E) / E0;
+					centry += (Reo.InertiaMomY - Math.Pow(Centroid.X, 2) * Reo.Area) * (Reo.Material.E - Part.Material.E) / E0;
+					centrxy += (Reo.DeviationMomXY - (Centroid.Y * Centroid.X) * Reo.Area) * (Reo.Material.E - Part.Material.E) / E0;
+                }
             }
 
-            foreach (var Reo in Reinforcement) {
-                centrx += (Reo.InertiaMomX - Math.Pow(Centroid.Y, 2) * Reo.Area)
-                    * Reo.Material.E / Parts[0].Material.E;
-                centry += (Reo.InertiaMomY - Math.Pow(Centroid.X, 2) * Reo.Area)
-                    * Reo.Material.E / Parts[0].Material.E;
-                centrxy += (Reo.DeviationMomXY - (Centroid.Y * Centroid.X) * Reo.Area)
-                    * Reo.Material.E / Parts[0].Material.E;
+            foreach (var Reo in ReinforcementFree) {
+                centrx += (Reo.InertiaMomX - Math.Pow(Centroid.Y, 2) * Reo.Area) * Reo.Material.E / Parts[0].Material.E;
+                centry += (Reo.InertiaMomY - Math.Pow(Centroid.X, 2) * Reo.Area) * Reo.Material.E / Parts[0].Material.E;
+                centrxy += (Reo.DeviationMomXY - (Centroid.Y * Centroid.X) * Reo.Area) * Reo.Material.E / Parts[0].Material.E;
             }
 
             CentrInertiaMom_X = centrx;
@@ -174,10 +198,21 @@ namespace Majstersztyk
 
         protected override bool IsObjectCorrect() {
 
-            foreach (TS_reinforcement Reo_group in Reinforcement) {
-                if (!Reo_group.IsCorrect) return false;
+            for (int i = 0; i < ReinforcementEntire.Count; i++) {
+        		if (!ReinforcementEntire[i].IsCorrect) return false;
+        		for (int j = 0; j < ReinforcementEntire.Count; j++) {
+        			if (i!=j) {
+        				foreach (var bar1 in ReinforcementEntire[i].Bars) {
+        					foreach (var bar2 in ReinforcementEntire[j].Bars) {
+        						double mindist = (bar1.Diameter + bar2.Diameter)/2;
+        						double dist = Math.Sqrt(Math.Pow(bar1.coordinates.X-bar2.coordinates.X,2)+Math.Pow(bar1.coordinates.Y-bar2.coordinates.Y,2));
+								if (dist < mindist) return false;
+        					}
+        				}
+        			}
+        		}
             }
-
+        	
             foreach (var Part in Parts) {
                 if (!Part.IsCorrect) return false;
             }
@@ -213,12 +248,34 @@ namespace Majstersztyk
 				text += tenPart.ToString();
 			}
 			
-			foreach (var reoGroup in Reinforcement) {
-				text += reoGroup.ToString();
+			text += Environment.NewLine + Environment.NewLine + "ENTIRE REINFORCEMENT IN THE SECTION:";
+			
+			foreach (var reoGroup in ReinforcementEntire) {
+				text += Environment.NewLine + reoGroup.ToString();
 			}
 			
 			return text;
 		}
+        
+        private void SeperateReinforcementForParts(){
+			ReinforcementFree = ReinforcementEntire;
+			
+        	for (int i = 0; i < ReinforcementEntire.Count; i++) {
+				foreach (var part in Parts) {
+					ReinforcementFree[i] = part.TakeBelongingReinforcement(ReinforcementFree[i]);
+				}
+			}
+				/*
+        		foreach (var bar in reoGroup.Bars) {
+					bool IsBarFree = false;
+        			foreach (var part in Parts) {
+						if (part.AddBelongingReinforcement(bar)) break;
+						IsBarFree = true;
+        			}
+					if (IsBarFree) BarsGroup.Add(bar);
+        		}
+				ReinforcementFree.Add(new TS_reinforcement(BarsGroup, reoGroup.Material));*/
+        	}
 
         
 

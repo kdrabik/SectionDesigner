@@ -58,7 +58,8 @@ namespace Majstersztyk
 		
 		public override string ToString()
 		{
-			return "[" + string.Format("{0:0.000}",X) + " ; " + string.Format("{0:0.000}",Y) + "]";
+			string format = "{0:e4}";
+			return "[" + string.Format(format,X) + ";" + string.Format(format,Y) + "]";
 		}
 		
 		public bool IsTheSame(TS_point point2){

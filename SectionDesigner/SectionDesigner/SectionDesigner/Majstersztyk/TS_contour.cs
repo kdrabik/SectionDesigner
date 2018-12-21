@@ -116,9 +116,14 @@ namespace Majstersztyk
             return 1d / 24 * Ixy;
         }
         
-        protected int IndexOfNextVertex(int currentVertex)
+        public int IndexOfNextVertex(int currentVertex)
         {
             return (currentVertex + 1) % Vertices.Count;
+        }
+        
+        public int IndexOfNextSide(int currentSide)
+        {
+            return (currentSide + 1) % Sides.Count;
         }
 
         protected static List<TS_side> GenerateSides(List<TS_point> points)
@@ -154,12 +159,34 @@ namespace Majstersztyk
 				if (side.IsContain(point)) return false;
 			}
 			
+			double sum = 0;
+			for (int i = 0; i < Vertices.Count; i++) {
+				TS_side vector1 = new TS_side(point, Vertices[i]);
+				TS_side vector2 = new TS_side(point, Vertices[IndexOfNextSide(i)]);
+				double angle = vector1.DirectedAngleToTheVector(vector2);
+				sum += angle;
+			}
+			
+			if (IsAlmostZero(sum)) {
+				
+				return false;
+			}
+			
+			if (TS_point.TS_AreDoublesEqual(sum%(2*Math.PI),0)) {
+				return true;
+			}
+			
+			//Angle Summation Test http://erich.realtimerendering.com/ptinpoly/#referrer=blog.vokiel.com
+			//The worst algorithm in the world ;)
+			
+			
+			/* THREE CROSSING ALGORITHM http://erich.realtimerendering.com/ptinpoly/#referrer=blog.vokiel.com
 			TS_line horLine = new TS_line(0, point.Y);
 			List<TS_point> horPoints = new List<TS_point>();
 			
 			foreach (var side in Sides) {
 				TS_point pointX = side.CrossedPoint(horLine);
-				if (pointX.X > point.X && !horPoints.Contains(pointX)) {
+				if (pointX.X > point.X && !horPoints.Contains(pointX)) {  //  to trzeba INACZEJ!
 					horPoints.Add(pointX);
 					}
 				}
@@ -204,9 +231,17 @@ namespace Majstersztyk
 			
 			int countVD = vertPointsD.Count;
 			if (countVD % 2 != 0) return true;
-			
-			return false;
+			*/
+			return true;
         }
+        
+		private bool IsAlmostZero(double x)
+		{
+			double error = Math.Pow(10, -10);
+			if (Math.Abs(x) < error)
+				return true;
+			return false;
+		}
         
         public bool IsAVertex(TS_point point){
         	foreach (var vertex in Vertices) {

@@ -24,6 +24,10 @@ namespace Majstersztyk
             Material = material;
             CalcProperties();
         }
+        
+        public TS_reinforcement(List<TS_bar> bars, TS_materials.TS_material material, string Name):this(bars,material){
+        	this.Name = Name;
+        }
 
         protected override double CalcArea(){
 			double area = 0;
@@ -103,7 +107,7 @@ namespace Majstersztyk
         public override string ToString()
 		{
 			string text = "";
-			text += Environment.NewLine + Environment.NewLine + "Material: " + Material.Name 
+			text += Environment.NewLine + "Material: " + Material.Name 
 				+ " Elastic modulus: " + String.Format("{0:E2}", Material.E);
 			text += base.ToString();
 			

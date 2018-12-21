@@ -89,7 +89,7 @@ namespace Majstersztyk
             string text = "";
             string format = "{0:e4}";
 
-            text += Environment.NewLine + "Name: " + Name + 
+            text += "Name: " + Name + 
                 Environment.NewLine + "Type: " + TypeOf + 
                 Environment.NewLine + "Is correct?: " + IsCorrect;
             text += Environment.NewLine + "Area: " + String.Format(format, Area);
@@ -104,7 +104,7 @@ namespace Majstersztyk
             text += Environment.NewLine + "Central deviation moment XY: " + String.Format(format, CentrDeviationMom_XY);
             text += Environment.NewLine + "Central principle inertia moment X: " + String.Format(format, CentrPrincipleInertiaMom_1);
             text += Environment.NewLine + "Central principle inertia moment Y: " + String.Format(format, CentrPrincipleInertiaMom_2);
-            text += Environment.NewLine + "Angle of principle layout: " + String.Format(format, AngleOfPrincipleLayout / Math.PI * 360) + " [deg]";
+            text += Environment.NewLine + "Angle of principle layout: " + String.Format(format, AngleOfPrincipleLayout / Math.PI * 180) + " [deg]";
 
             return text;
         }

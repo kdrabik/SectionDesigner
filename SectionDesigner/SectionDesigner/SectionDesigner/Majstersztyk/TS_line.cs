@@ -157,5 +157,13 @@ namespace Majstersztyk
 			
 			return A + "x+" + B + "y+" + C + "=0";
 		}
+		
+		public double AngleToOX(){
+			if (TS_point.TS_AreDoublesEqual(GenB,0.0)) {
+				return Math.PI /2;
+			}
+			return Math.Atan(SlopeA);
+		}
+		
 	}
 }

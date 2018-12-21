@@ -87,11 +87,58 @@ namespace Majstersztyk
                 {
                     return true;
                 }
-                return false;
+                
+        		if (TS_point.TS_AreDoublesEqual(x,StartPoint.X) && TS_point.TS_AreDoublesEqual(y,StartPoint.Y)) {
+					return true;
+        		}
+        	
+        		if (TS_point.TS_AreDoublesEqual(x,EndPoint.X) && TS_point.TS_AreDoublesEqual(y,EndPoint.Y)) {
+					return true;
+        		}
+				return false;
+                
+                /*
+				if (IsGreaterOrEqual(x, minX1) && IsLesserOrEqual(x, maxX1) && IsGreaterOrEqual(y, minY1) && IsLesserOrEqual(y, maxY1)) {
+					return true;
+				}
+				return false;*/
             }
             return false;
         }
         
+        private bool IsGreaterOrEqual(double x, double xToCompare){
+			double dist = Math.Max(Math.Abs(x), Math.Abs(xToCompare)) / 1000000;
+			if (x >= xToCompare-dist) return true;
+			return false;
+        }
+        
+        private bool IsLesserOrEqual(double x, double xToCompare){
+			double dist = Math.Max(Math.Abs(x), Math.Abs(xToCompare)) / 1000000;
+			if (x <= xToCompare+dist) return true;
+			return false;
+        }
+        
+        public double DirectedAngleToOX(){
+			double r = Math.Sqrt(Math.Pow(EndPoint.X - StartPoint.X, 2) + Math.Pow(EndPoint.Y - StartPoint.Y, 2));
+			double cos = (EndPoint.X - StartPoint.X) / r;
+			if (TS_point.TS_AreDoublesEqual(0, cos)) {
+				double sin = (EndPoint.Y - StartPoint.Y) / r;
+				if (sin > 0) return Math.PI / 2;
+				return Math.PI * 3 / 2;
+			}
+			if (cos > 0) return Math.Atan(line.SlopeA);
+			return (Math.Atan(line.SlopeA) + Math.PI * 3) % (2 * Math.PI);
+        }
+        
+        public double DirectedAngleToTheVector(TS_side vector2){
+			//kierunek dodatni zgodny ze wskazówkami zegara
+			double angle1 = DirectedAngleToOX();
+			double angle2 = vector2.DirectedAngleToOX();
+			double deltaA = angle1 - angle2;
+			while (deltaA > Math.PI) deltaA -= 2 * Math.PI;
+			while (deltaA < -Math.PI) deltaA += 2 * Math.PI;
+			return deltaA;
+        }
 
 		public override string ToString()
 		{
