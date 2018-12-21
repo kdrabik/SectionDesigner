@@ -4,12 +4,16 @@
 	using System.Windows.Input;
 	using SectionDesigner.Models;
 	using SectionDesigner.Commands;
+	using Majstersztyk;
 	using System.ComponentModel;
+	using System.Collections.ObjectModel;
+	using System.Windows.Controls;
 
-	internal class SectionViewModel
+	internal class SectionViewModel : INotifyPropertyChanged
 	{
 		public SectionViewModel() {
-			_Section = new Section(2);
+			_Section = Creator.ReadSection();
+			//_Selected = SectionProp.SelectedContent as TS_part;
 			UpdateCommand = new SectionUpdateCommand(this);
 		}
 		
@@ -18,17 +22,29 @@
 				if (Section == null) {
 					return false;
 				}
-				return !String.IsNullOrEmpty(Convert.ToString(Section.Size));
+				return true;
 			}
 			//set;
 		}
 		
-		private Section _Section;
-		public Section Section {
+		private TS_section _Section;
+		public TS_section Section {
 			get {
 				return _Section;
 			}
 		}
+		
+		private TS_part _Selected;
+		public TS_part Selected {
+			get {
+				return _Selected;
+			}
+			set
+            {
+                _Selected = value;
+            }
+		}
+		
 		
 		public ICommand UpdateCommand {
 			get;
@@ -38,5 +54,18 @@
 		public void SaveChanges() {
 
 		}
+		
+		#region InotifyPropertyChanged Members
+	
+		public event PropertyChangedEventHandler PropertyChanged;
+	
+		private void OnPropertyChanged(string propertyName) {
+			PropertyChangedEventHandler handler = PropertyChanged;
+			
+			if (handler != null) {
+				handler(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		#endregion
 	}
 }

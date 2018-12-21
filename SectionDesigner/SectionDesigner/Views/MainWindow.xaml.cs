@@ -20,7 +20,7 @@ namespace SectionDesigner.Views
 		public MainWindow()
 		{
 			InitializeComponent();
-			DataContext = new SectionViewModel();
+			DataContext = new VMContainer();
 		}
 	}
 }

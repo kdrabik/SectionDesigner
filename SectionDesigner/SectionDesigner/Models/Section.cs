@@ -36,7 +36,7 @@ using System.ComponentModel;
 				//this.Size = Convert.ToInt32(0.5 * value);
 			}
 		}
-	
+		
 		#region InotifyPropertyChanged Members
 	
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -49,5 +49,6 @@ using System.ComponentModel;
 			}
 		}
 		#endregion
+	
 	}
 }

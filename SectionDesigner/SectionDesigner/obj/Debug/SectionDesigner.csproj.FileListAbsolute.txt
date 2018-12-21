@@ -9,3 +9,5 @@ C:\Users\mo051075\Desktop\SD\SectionDesigner\SectionDesigner\bin\Debug\SectionDe
 C:\Users\mo051075\Desktop\SD\SectionDesigner\SectionDesigner\bin\Debug\SectionDesigner.pdb
 C:\Users\mo051075\Desktop\SD\SectionDesigner\SectionDesigner\obj\Debug\SectionDesigner.exe
 C:\Users\mo051075\Desktop\SD\SectionDesigner\SectionDesigner\obj\Debug\SectionDesigner.pdb
+C:\Users\mo051075\Desktop\SD\SectionDesigner\SectionDesigner\obj\Debug\Views\MainWindowResources.baml
+C:\Users\mo051075\Desktop\SD\SectionDesigner\SectionDesigner\obj\Debug\Views\MainWindowResources.g.cs
