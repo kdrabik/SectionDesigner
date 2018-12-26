@@ -11,11 +11,16 @@
 
 	internal class SectionViewModel : INotifyPropertyChanged
 	{
-		public SectionViewModel() {
+        public OxyPlotViewModel OxyPreview { get; set; }
+
+        public SectionViewModel() {
 			_Section = Creator.ReadSection();
 			//_Selected = SectionProp.SelectedContent as TS_part;
 			UpdateCommand = new SectionUpdateCommand(this);
-		}
+            OxyPreview = new OxyPlotViewModel();
+            //OxyPreview.AddPart(_Section.Parts[0]);
+            OxyPreview.DrawSection(_Section);
+        }
 		
 		public bool CanUpdate {
 			get {
