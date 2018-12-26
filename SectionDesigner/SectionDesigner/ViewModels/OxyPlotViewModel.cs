@@ -83,7 +83,7 @@ namespace SectionDesigner.ViewModels
                 foreach (var _void in part.Voids) {
                     AreaSeries seria1 = new AreaSeries();
                     seria1.Color = randomColor;
-                    //seria1.Fill = OxyColors.White;
+                    seria1.Fill = OxyColors.White;
                     seria1.StrokeThickness = generalThickness;
 
                     foreach (var side in _void.Sides) {
@@ -113,6 +113,10 @@ namespace SectionDesigner.ViewModels
                     seria.Points.Add(point);
                 }
                 SectionPlotModel.Series.Add(seria);
+            }
+
+            foreach (var axis in SectionPlotModel.Axes) {
+                axis.Layer = OxyPlot.Axes.AxisLayer.AboveSeries;
             }
         }
 
