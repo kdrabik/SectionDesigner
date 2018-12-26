@@ -20,7 +20,8 @@ namespace SectionDesigner.Views
 		public MainWindow()
 		{
 			InitializeComponent();
-			DataContext = new VMContainer();
+            //DataContext = new VMContainer();
+            //Preview.Model = (DataContext as VMContainer).VM1.OxyPreview.SectionPlotModel;
 		}
 	}
 }
