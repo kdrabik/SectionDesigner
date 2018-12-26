@@ -24,7 +24,7 @@ namespace Majstersztyk
         public TS_materials.TS_material Material { get; private set; }
 
         public override string TypeOf { get { return typeOf; } }
-        private string typeOf = "Part";
+        private new string typeOf = "Part";
 
         public TS_part(TS_materials.TS_material material, TS_contour contour, List<TS_void> voids):base()
         {

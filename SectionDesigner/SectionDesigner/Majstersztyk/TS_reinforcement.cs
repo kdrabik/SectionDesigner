@@ -12,7 +12,7 @@ namespace Majstersztyk
         public TS_materials.TS_material Material { get; private set; }
 
         public override string TypeOf { get { return typeOf; } }
-        private string typeOf = "Reinforcement";
+        private new string typeOf = "Reinforcement";
 
         public TS_reinforcement() {
             Bars = new List<TS_bar>();

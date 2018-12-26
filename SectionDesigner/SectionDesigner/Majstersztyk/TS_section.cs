@@ -22,7 +22,7 @@ namespace Majstersztyk
         public List<TS_reinforcement> Reinforcement { get; private set; }
 
         public override string TypeOf { get { return typeOf; } }
-        private string typeOf = "Section";
+        private new string typeOf = "Section";
         /*
 		public double Area {get; private set;}
 		public double StaticMomX {get; private set;}

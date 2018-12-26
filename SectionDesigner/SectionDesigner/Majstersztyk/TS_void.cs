@@ -19,7 +19,7 @@ namespace Majstersztyk
         public TS_void(List<TS_point> vertices) : base(vertices) { }
         
         public override string TypeOf { get { return typeOf; } }
-        private string typeOf = "Void";
+        private new string typeOf = "Void";
 
         public override double Area { get { return -base.Area; } }
         public override double StaticMomX { get { return -base.StaticMomX; } }

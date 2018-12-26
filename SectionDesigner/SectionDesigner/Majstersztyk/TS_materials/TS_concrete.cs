@@ -19,7 +19,7 @@ public class TS_concrete: TS_material, IComparable<TS_concrete>
         /// <summary>
         /// Nazwa klasy betonu
         /// </summary>
-        public string Name { get; private set; }
+        public new string Name { get; private set; }
         /// <summary>
         /// Wytrzymałość charakterystyczna betonu na ściskanie w MPa
         /// </summary>

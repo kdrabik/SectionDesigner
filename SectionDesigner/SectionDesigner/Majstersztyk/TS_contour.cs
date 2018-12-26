@@ -19,10 +19,11 @@ namespace Majstersztyk
         public List<TS_point> Vertices { get; protected set; }
         public List<TS_side> Sides { get; protected set; }
         public override string TypeOf { get { return typeOf; } }
-        private string typeOf = "Contour";
+        private new string typeOf = "Contour";
 
         protected TS_contour() {
             Vertices = new List<TS_point>();
+            Sides = new List<TS_side>();
         }
 
         public TS_contour(List<TS_point> vertices) {
