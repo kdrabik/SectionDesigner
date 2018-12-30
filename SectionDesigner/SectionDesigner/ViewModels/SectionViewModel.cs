@@ -39,19 +39,28 @@
 			}
 		}
 		
-		private TS_part _Selected;
-		public TS_part Selected {
+		private TS_part _Selected_Part;
+		public TS_part Selected_Part {
 			get {
-				return _Selected;
+				return _Selected_Part;
 			}
 			set
             {
-                _Selected = value;
+                _Selected_Part = value;
             }
 		}
-		
-		
-		public ICommand UpdateCommand {
+
+        private TS_contour _Selected_Contour;
+        public TS_contour Selected_Contour {
+            get {
+                return _Selected_Contour;
+            }
+            set {
+                _Selected_Contour = value;
+            }
+        }
+
+        public ICommand UpdateCommand {
 			get;
 			private set;
 		}

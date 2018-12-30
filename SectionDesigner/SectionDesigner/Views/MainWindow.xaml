@@ -81,28 +81,34 @@
 			<TabControl
 				x:Name="SectionProp"
 				ItemsSource="{Binding VM1.Section.Parts}"
-				SelectedItem="{Binding Selected}">
-				<TabControl.ItemTemplate>
+				SelectedItem="{Binding VM1.Selected_Part}">
+                    <TabControl.ItemTemplate>
 					<DataTemplate>
-							<TextBlock Text="{Binding Name}"/>
+                            <TextBlock Text="{Binding Name}"/>
                 	</DataTemplate>
 				</TabControl.ItemTemplate>
 				<TabControl.ContentTemplate>
 					<DataTemplate>
 						<TabControl
-							x:Name="PartProp" ItemsSource="{Binding Selected.Voids}">
-							<TabItem Header="Contour">
-								<StackPanel>
-									<TextBlock Text="{Binding Area}" />
-									<TextBlock Text="{Binding Contour.Area}" />
-								</StackPanel>
-							</TabItem>
-							<TabControl.ItemTemplate>
-								<DataTemplate>
-									<TextBlock Text="{Binding Name}"/>
-                				</DataTemplate>
-							</TabControl.ItemTemplate>
-						</TabControl>
+                            x:Name="PartProp" 
+                            ItemsSource="{Binding Voids}"
+                            SelectedItem="{Binding VM1.Selected_Contour}">
+                            <TabControl.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Name}"/>
+                                </DataTemplate>
+                             </TabControl.ItemTemplate>
+                                <TabControl.ContentTemplate>
+                                    <DataTemplate>
+                                        <StackPanel>
+                                            <TextBox Text="{Binding Centroid, Mode=OneWay}"/>
+                                            <DataGrid
+                                            ItemsSource="{Binding Vertices, Mode=OneWay}">
+                                            </DataGrid>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </TabControl.ContentTemplate>
+                            </TabControl>
 					</DataTemplate>
 				</TabControl.ContentTemplate>
 			</TabControl>
