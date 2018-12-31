@@ -98,7 +98,9 @@ namespace Majstersztyk
         private static TS_contour ReadContour (string pathToThePart){
 			string path = pathToThePart + c;
 			TS_contour result = new TS_contour(ReadPoints(path));
-			return result;
+            string name = FileName(path);
+            result.Name = name;
+            return result;
         }
         
         private static TS_materials.TS_mat_universal ReadMaterial(string pathToThePart){
