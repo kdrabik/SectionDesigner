@@ -10,7 +10,7 @@
         <local:VMContainer/>
     </Window.DataContext>
     <Grid Margin="0">
-	<TabControl Margin="0,0,0,0">
+	<TabControl Margin="0" Width="460" HorizontalAlignment="Left">
 		<TabItem
 			Header="Materials"
 			x:Name="MatSet">
@@ -78,10 +78,10 @@
 		<TabItem
 			Header="Section"
 			x:Name="Section">
-			<TabControl
+                <TabControl
 				x:Name="SectionProp"
-				ItemsSource="{Binding VM1.Section.Parts}"
-				SelectedItem="{Binding VM1.Selected_Part}">
+				ItemsSource="{Binding VM1.Section.Parts}">
+                    <!--SelectedItem="{Binding VM1.Selected_Part}"-->
                     <TabControl.ItemTemplate>
 					<DataTemplate>
                             <TextBlock Text="{Binding Name}"/>
@@ -89,10 +89,10 @@
 				</TabControl.ItemTemplate>
 				<TabControl.ContentTemplate>
 					<DataTemplate>
-						<TabControl
+                            <TabControl
                             x:Name="PartProp" 
-                            ItemsSource="{Binding Voids}"
-                            SelectedItem="{Binding VM1.Selected_Contour}">
+                            ItemsSource="{Binding GeometryComponents}">
+                                <!--SelectedItem="{Binding VM1.Selected_Contour}">-->
                             <TabControl.ItemTemplate>
                                 <DataTemplate>
                                     <TextBlock Text="{Binding Name}"/>
@@ -363,6 +363,6 @@
 			Header="Results"
 			x:Name="Results"></TabItem>
 	</TabControl>
-    <oxy:PlotView x:Name="Preview" Margin="465,0,0,0" Model="{Binding VM1.OxyPreview.SectionPlotModel, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
+    <oxy:PlotView x:Name="Preview" Margin="460,0,0,0" Model="{Binding VM1.OxyPreview.SectionPlotModel, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
     </Grid>
 </Window>

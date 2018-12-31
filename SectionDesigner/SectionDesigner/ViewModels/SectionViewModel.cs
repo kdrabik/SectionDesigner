@@ -38,7 +38,7 @@
 				return _Section;
 			}
 		}
-		
+        /*  NAJPRAWDOPODOBNIEJ NIEPOTRZEBNE 
 		private TS_part _Selected_Part;
 		public TS_part Selected_Part {
 			get {
@@ -49,7 +49,7 @@
                 _Selected_Part = value;
             }
 		}
-
+        
         private TS_contour _Selected_Contour;
         public TS_contour Selected_Contour {
             get {
@@ -58,7 +58,7 @@
             set {
                 _Selected_Contour = value;
             }
-        }
+        }*/
 
         public ICommand UpdateCommand {
 			get;
