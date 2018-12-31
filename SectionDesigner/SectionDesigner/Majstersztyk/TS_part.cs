@@ -9,6 +9,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 
 namespace Majstersztyk
 {
@@ -17,11 +18,17 @@ namespace Majstersztyk
     /// </summary>s
     /// 
 
-    public class TS_part : TS_contour
-    {
-		public List<TS_void> Voids { get; private set; }
-		public TS_contour Contour { get; private set; }
+    public class TS_part : TS_contour {
+        public List<TS_void> Voids { get; private set; }
+        public TS_contour Contour { get; private set; }
         public TS_materials.TS_material Material { get; private set; }
+        public List<TS_contour> GeometryComponents{
+            get {
+                List<TS_contour> geomComp = new List<TS_contour>();
+                geomComp.Add(Contour);
+                geomComp.AddRange(Voids);
+                return geomComp;
+            } private set { } }
 
         public override string TypeOf { get { return typeOf; } }
         private new string typeOf = "Part";
