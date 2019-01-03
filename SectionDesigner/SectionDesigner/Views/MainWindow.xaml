@@ -103,7 +103,7 @@
                                         <StackPanel>
                                             <TextBox Text="{Binding Centroid, Mode=OneWay}"/>
                                             <DataGrid
-                                            ItemsSource="{Binding Vertices, Mode=OneWay}">
+                                            ItemsSource="{Binding Vertices, Mode=TwoWay}">
                                             </DataGrid>
                                         </StackPanel>
                                     </DataTemplate>
@@ -305,7 +305,7 @@
 						Background="#FFE5E5E5">
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition />
-						</Grid.ColumnDefinitions>
+						</Grid.ColumnDefinitions><!--
 						<DataGrid
 							x:Name="dataGrid_SLS_CHR"
 							HorizontalAlignment="Left"
@@ -336,7 +336,7 @@
 									Binding="{Binding Path=X, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
 									Header="Bending Moment [kNm]" />
 							</DataGrid.Columns>
-						</DataGrid>
+						</DataGrid>-->
 						<Button
 							x:Name="button_Import_CHR"
 							Content="Import from CSV File"

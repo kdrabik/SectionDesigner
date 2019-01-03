@@ -2,7 +2,7 @@
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 # SharpDevelop 5.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SectionDesigner", "SectionDesigner\SectionDesigner.csproj", "{8DE19F69-3D63-4989-ABBB-8AB22A1022E8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SectionDesigner", "SectionDesigner\SectionDesigner.csproj", "{8E7BE27B-12E2-45B5-8070-BB8FEAAD3B20}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -10,9 +10,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{8DE19F69-3D63-4989-ABBB-8AB22A1022E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8DE19F69-3D63-4989-ABBB-8AB22A1022E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8DE19F69-3D63-4989-ABBB-8AB22A1022E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8DE19F69-3D63-4989-ABBB-8AB22A1022E8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8E7BE27B-12E2-45B5-8070-BB8FEAAD3B20}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8E7BE27B-12E2-45B5-8070-BB8FEAAD3B20}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8E7BE27B-12E2-45B5-8070-BB8FEAAD3B20}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8E7BE27B-12E2-45B5-8070-BB8FEAAD3B20}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {85844E32-91AE-45C8-BBA3-D5DC223DBF9C}
 	EndGlobalSection
 EndGlobal

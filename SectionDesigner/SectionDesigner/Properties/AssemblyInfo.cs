@@ -1,31 +1,55 @@
-﻿#region Using directives
-
-using System;
-using System.Reflection;
+﻿using System.Reflection;
+using System.Resources;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Windows;
 
-#endregion
-
-// General Information about an assembly is controlled through the following 
-// set of attributes. Change these attribute values to modify the information
-// associated with an assembly.
+// Ogólne informacje o zestawie są kontrolowane poprzez następujący 
+// zestaw atrybutów. Zmień wartości tych atrybutów, aby zmodyfikować informacje
+// powiązane z zestawem.
 [assembly: AssemblyTitle("SectionDesigner")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("SectionDesigner")]
-[assembly: AssemblyCopyright("Copyright 2018")]
+[assembly: AssemblyCopyright("Copyright ©  2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
-// This sets the default COM visibility of types in the assembly to invisible.
-// If you need to expose a type to COM, use [ComVisible(true)] on that type.
+// Ustawienie elementu ComVisible na wartość false sprawia, że typy w tym zestawie są niewidoczne
+// dla składników COM. Jeśli potrzebny jest dostęp do typu w tym zestawie z
+// COM, ustaw wartość true dla atrybutu ComVisible tego typu.
 [assembly: ComVisible(false)]
 
-// The assembly version has following format :
+//Aby rozpocząć kompilację aplikacji możliwych do zlokalizowania, ustaw
+//<UICulture>Kultura_używana_podczas_kodowania</UICulture> w pliku csproj
+//w grupie <PropertyGroup>. Jeśli na przykład jest używany język angielski (USA)
+//w plikach źródłowych ustaw dla elementu <UICulture> wartość en-US. Następnie usuń komentarz dla
+//poniższego atrybutu NeutralResourceLanguage. Zaktualizuj wartość „en-US” w
+//poniższej linii tak, aby dopasować ustawienie UICulture w pliku projektu.
+
+//[assembly: NeutralResourcesLanguage("en-US", UltimateResourceFallbackLocation.Satellite)]
+
+
+[assembly: ThemeInfo(
+    ResourceDictionaryLocation.None, //gdzie znajdują się słowniki zasobów specyficznych dla motywów
+                                     //(używane, jeśli nie można odnaleźć zasobu na stronie,
+                                     // lub słowniki zasobów aplikacji)
+    ResourceDictionaryLocation.SourceAssembly //gdzie znajduje się słownik zasobów ogólnych
+                                              //(używane, jeśli nie można odnaleźć zasobu na stronie,
+                                              // aplikacji lub słowników zasobów specyficznych dla motywów)
+)]
+
+
+// Informacje o wersji zestawu zawierają następujące cztery wartości:
 //
-// Major.Minor.Build.Revision
+//      Wersja główna
+//      Wersja pomocnicza
+//      Numer kompilacji
+//      Rewizja
 //
-// You can specify all the values or you can use the default the Revision and 
-// Build Numbers by using the '*' as shown below:
-[assembly: AssemblyVersion("1.0.*")]
+// Możesz określić wszystkie wartości lub użyć domyślnych numerów kompilacji i poprawki
+// przy użyciu symbolu „*”, tak jak pokazano poniżej:
+// [assembly: AssemblyVersion("1.0.*")]
+[assembly: AssemblyVersion("1.0.0.0")]
+[assembly: AssemblyFileVersion("1.0.0.0")]

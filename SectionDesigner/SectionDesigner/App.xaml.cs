@@ -1,15 +1,17 @@
 ﻿using System;
-using System.Windows;
-using System.Data;
-using System.Xml;
+using System.Collections.Generic;
 using System.Configuration;
+using System.Data;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows;
 
 namespace SectionDesigner
 {
-	/// <summary>
-	/// Interaction logic for App.xaml
-	/// </summary>
-	public partial class App : Application
-	{
-	}
+    /// <summary>
+    /// Logika interakcji dla klasy App.xaml
+    /// </summary>
+    public partial class App : Application
+    {
+    }
 }

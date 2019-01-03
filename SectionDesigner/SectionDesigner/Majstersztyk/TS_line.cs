@@ -7,38 +7,112 @@
  * To change this template use Tools | Options | Coding | Edit Standard Headers.
  */
 using System;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace Majstersztyk
 {
 	/// <summary>
 	/// Description of TS_line.
 	/// </summary>
-	public class TS_line
-	{
-		public double GenA {get; private set;}
-		public double GenB {get; private set;}
-		public double GenC {get; private set;}
-		// dla postaci prostej Ax + By + C = 0
+	public class TS_line : INotifyPropertyChanged
+    {
+		#region dla postaci prostej Ax + By + C = 0
+        private double _GenA;
+
+        public double GenA {
+            get { return _GenA; }
+            set { _GenA = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private double _GenB;
+
+        public double GenB {
+            get { return _GenB; }
+            set { _GenB = value;
+            	OnPropertyChanged();
+            }
+        }
+
+        private double _GenC;
+
+        public double GenC {
+            get { return _GenC; }
+            set { _GenC = value;
+                OnPropertyChanged();
+            }
+        }
+		#endregion
 		
-		public double SlopeA {get; private set;}
-		public double InterceptB {get; private set;}
-		// dla postaci prostej y = ax + b
-		
-		private TS_point point1 {get;set;}
-		private	TS_point point2 {get;set;}
+		#region dla postaci prostej y = ax + b
+        private double _SlopeA;
+
+        public double SlopeA {
+            get { return _SlopeA; }
+            set { _SlopeA = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private double _InterceptB;
+
+        public double InterceptB {
+            get { return _InterceptB; }
+            set { _InterceptB = value;
+                OnPropertyChanged();
+            }
+        }
+        #endregion
+
+        private TS_point _Point1;
+
+        public TS_point Point1 {
+            get { return _Point1; }
+            set { 
+            	if (_Point1 != null)
+            		_Point1.PropertyChanged -= Line_PropertyChanged;
+            	
+            	_Point1 = value;
+            	
+            	if (_Point1 != null) {
+					_Point1.PropertyChanged += Line_PropertyChanged;
+            	}
+            	
+                OnPropertyChanged();
+            }
+        }
+        private TS_point _Point2;
+
+        public TS_point Point2 {
+            get { return _Point2; }
+            set { 
+            	if (_Point2 != null)
+            		_Point2.PropertyChanged -= Line_PropertyChanged;
+            	
+            	_Point2 = value;
+            	
+            	if (_Point2 != null) {
+					_Point2.PropertyChanged += Line_PropertyChanged;
+            	}
+            	
+                OnPropertyChanged();
+            }
+        }
 		
 		public TS_line(TS_side division)
 		{
-			point1 = division.StartPoint;
-			point2 = division.EndPoint;
-			Factors();
+			Point1 = division.StartPoint;
+			Point2 = division.EndPoint;
+			ReCalcMe();
 		}
 		
 		public TS_line(TS_point pointA, TS_point pointB)
 		{
-			point1 = pointA;
-			point2 = pointB;
-			Factors();
+			Point1 = pointA;
+			Point2 = pointB;
+			ReCalcMe();
 		}
 		
 		public TS_line(double SlopeA, double InterceptB){
@@ -47,6 +121,7 @@ namespace Majstersztyk
 			GenB = -1;
 			GenA = SlopeA;
 			GenC = InterceptB;
+			SetSomeMatchedPoints();
 		}
 		
 		public TS_line(double A, double B, double C){
@@ -55,38 +130,48 @@ namespace Majstersztyk
 			this.GenC = C;
 			SlopeA = GenA / (-GenB);
 			InterceptB = GenC / (-GenB);
+			SetSomeMatchedPoints();
 		}
 		
+		#region Calculation and Checks
 		private double SlopeFactorA()
 		{
-			if (TS_point.TS_AreDoublesEqual(point1.X, point2.X)) return Double.NaN;
-			return (point2.Y - point1.Y)/(point2.X - point1.X);
+			if (TS_point.TS_AreDoublesEqual(Point1.X, Point2.X)) return Double.NaN;
+			return (Point2.Y - Point1.Y)/(Point2.X - Point1.X);
 		}
 		
 		private double InterceptFactorB()
 		{
-			SlopeA = SlopeFactorA();
-			if (Double.IsNaN(SlopeA)) return Double.NaN;
-			return point2.Y - (SlopeA * point2.X);
+			double mySlopeA = SlopeFactorA();
+			if (Double.IsNaN(mySlopeA)) return Double.NaN;
+			return Point2.Y - (mySlopeA * Point2.X);
 		}
 		
-		private void Factors()
+		public void ReCalcMe()
 		{
-			if (TS_point.TS_AreDoublesEqual(point1.X, point2.X)) {
-				SlopeA = Double.PositiveInfinity;
-				InterceptB = Double.NaN;
-				GenA = 1;
-				GenB = 0;
-				GenC = -point1.X;
-			}
-			else 
-			{
-				SlopeA = (point2.Y - point1.Y)/(point2.X - point1.X);
-				InterceptB = point2.Y - (SlopeA * point2.X);
-				GenA = SlopeA;
-				GenB = -1;
-				GenC = InterceptB;
-			}
+            if (Point1 != null && Point2 != null) {
+
+				if (TS_point.TS_AreDoublesEqual(Point1.Y, Point2.Y) && TS_point.TS_AreDoublesEqual(Point1.X, Point2.X)) {
+						SlopeA = Double.NaN;
+                    	InterceptB = Double.NaN;
+                    	GenA = Double.NaN;
+                    	GenB = Double.NaN;
+                    	GenC = Double.NaN;
+					} else
+                if (TS_point.TS_AreDoublesEqual(Point1.X, Point2.X)) {
+					SlopeA = Double.PositiveInfinity;
+                    InterceptB = Double.NaN;
+                    GenA = 1;
+                    GenB = 0;
+                    GenC = -Point1.X;
+                } else {
+                    SlopeA = (Point2.Y - Point1.Y) / (Point2.X - Point1.X);
+                    InterceptB = Point2.Y - (SlopeA * Point2.X);
+                    GenA = SlopeA;
+                    GenB = -1;
+                    GenC = InterceptB;
+                }
+            }
 		}
 		
 		private double GetValueOf_Yaxis(double x){
@@ -145,7 +230,20 @@ namespace Majstersztyk
             }
             return false;
         }
+        
+        private void SetSomeMatchedPoints(){
+        	if (TS_point.TS_AreDoublesEqual(GenB,0) ) {
+				_Point1 = new TS_point(_GenC / _GenA, 0);
+				_Point2 = new TS_point(_GenC / _GenA, 1);
+        	}
+        	else{
+        		_Point1 = new TS_point(0, GetValueOf_Yaxis(0));
+				_Point2 = new TS_point(1, GetValueOf_Yaxis(1));
+        	}
+        }
 		
+        #endregion
+        
 		public override string ToString()
 		{
 			string format = "{0:0.###}";
@@ -156,6 +254,23 @@ namespace Majstersztyk
 			string b = String.Format(format, InterceptB);
 			
 			return A + "x+" + B + "y+" + C + "=0";
+        }
+
+        #region InotifyPropertyChanged Members
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void OnPropertyChanged([CallerMemberName] string propertyName="") {
+            PropertyChangedEventHandler handler = PropertyChanged;
+
+            if (handler != null) {
+                handler(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+        #endregion
+
+		void Line_PropertyChanged(object sender, PropertyChangedEventArgs args)
+		{
+			ReCalcMe();
 		}
-	}
+    }
 }

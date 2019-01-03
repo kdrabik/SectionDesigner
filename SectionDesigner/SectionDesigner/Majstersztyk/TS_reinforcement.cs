@@ -3,31 +3,49 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.ComponentModel;
 
 namespace Majstersztyk
 {
     public class TS_reinforcement:TS_region
     {
-        public List<TS_bar> Bars { get; private set; }
-        public TS_materials.TS_material Material { get; private set; }
+        private List<TS_bar> _Bars;
+
+        public List<TS_bar> Bars {
+            get { return _Bars; }
+            set { _Bars = value;
+                OnPropertyChanged("Bars");
+                CalcProperties();
+            }
+        }
+
+        private TS_materials.TS_material _Material;
+
+        public TS_materials.TS_material Material {
+            get { return _Material; }
+            set { _Material = value;
+                OnPropertyChanged("Material");
+                CalcProperties();
+            }
+        }
 
         public override string TypeOf { get { return typeOf; } }
-        private new string typeOf = "Reinforcement";
+        private new readonly string typeOf = "Reinforcement";
 
         public TS_reinforcement() {
-            Bars = new List<TS_bar>();
-            Material = null;
+            _Bars = new List<TS_bar>();
+            _Material = null;
         }
 
         public TS_reinforcement(List<TS_bar> bars, TS_materials.TS_material material) {
-            Bars = bars;
-            Material = material;
+            _Bars = bars;
+            _Material = material;
             CalcProperties();
         }
 
         protected override double CalcArea(){
 			double area = 0;
-        	foreach (var bar in Bars) {
+        	foreach (var bar in _Bars) {
 				area += bar.Area;
         	}
 			return area;
@@ -35,42 +53,42 @@ namespace Majstersztyk
         
         protected override double CalcSx(){
 			double sx = 0;
-			foreach (var bar in Bars) {
-				sx += bar.Area * bar.coordinates.Y;
+			foreach (var bar in _Bars) {
+				sx += bar.Area * bar.Coordinates.Y;
 			}
 			return sx;
         }
         
         protected override double CalcSy(){
         	double sy = 0;
-			foreach (var bar in Bars) {
-				sy += bar.Area * bar.coordinates.X;
+			foreach (var bar in _Bars) {
+				sy += bar.Area * bar.Coordinates.X;
 			}
 			return sy;
         }
         
         protected override double CalcIx(){
 			double ix = 0;
-			foreach (var bar in Bars) {
+			foreach (var bar in _Bars) {
 				double ib = Math.PI * Math.Pow(bar.Diameter, 4) / 64;
-				ix += ib + bar.Area * Math.Pow(bar.coordinates.Y, 2);
+				ix += ib + bar.Area * Math.Pow(bar.Coordinates.Y, 2);
 			}
 			return ix;
         }
         
         protected override double CalcIy(){
         	double iy = 0;
-			foreach (var bar in Bars) {
+			foreach (var bar in _Bars) {
 				double ib = Math.PI * Math.Pow(bar.Diameter, 4) / 64;
-				iy += ib + bar.Area * Math.Pow(bar.coordinates.X, 2);
+				iy += ib + bar.Area * Math.Pow(bar.Coordinates.X, 2);
 			}
 			return iy;
         }
 
         protected override double CalcIxy(){
 			double ixy = 0;
-			foreach (var bar in Bars) {
-				ixy += bar.Area * bar.coordinates.X * bar.coordinates.Y;
+			foreach (var bar in _Bars) {
+				ixy += bar.Area * bar.Coordinates.X * bar.Coordinates.Y;
 			}
 			return ixy;
         }
@@ -86,11 +104,11 @@ namespace Majstersztyk
         }
 
         protected override bool IsObjectCorrect(){
-        	for (int i = 0; i < Bars.Count; i++) {
-        		for (int j = 0; j < Bars.Count; j++) {
+        	for (int i = 0; i < _Bars.Count; i++) {
+        		for (int j = 0; j < _Bars.Count; j++) {
         			if (i != j) {
-        				double dist = Math.Sqrt(Math.Pow(Bars[i].coordinates.X-Bars[j].coordinates.X,2)+Math.Pow(Bars[i].coordinates.Y-Bars[j].coordinates.Y,2));
-        				double minDist = 0.5 * (Bars[i].Diameter + Bars[j].Diameter);
+        				double dist = Math.Sqrt(Math.Pow(_Bars[i].Coordinates.X-_Bars[j].Coordinates.X,2)+Math.Pow(_Bars[i].Coordinates.Y-_Bars[j].Coordinates.Y,2));
+        				double minDist = 0.5 * (_Bars[i].Diameter + _Bars[j].Diameter);
         				if (dist < minDist) {
 							return false;
         				}
@@ -103,8 +121,8 @@ namespace Majstersztyk
         public override string ToString()
 		{
 			string text = "";
-			text += Environment.NewLine + Environment.NewLine + "Material: " + Material.Name 
-				+ " Elastic modulus: " + String.Format("{0:E2}", Material.E);
+			text += Environment.NewLine + Environment.NewLine + "Material: " + _Material.Name 
+				+ " Elastic modulus: " + String.Format("{0:E2}", _Material.E);
 			text += base.ToString();
 			
 			return text;

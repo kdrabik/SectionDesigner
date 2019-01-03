@@ -8,6 +8,7 @@
  */
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace Majstersztyk
 {
@@ -16,10 +17,10 @@ namespace Majstersztyk
 	/// </summary>
 	public class TS_void:TS_contour
 	{
-        public TS_void(List<TS_point> vertices) : base(vertices) { }
+        public TS_void(ObservableCollection<TS_point> vertices) : base(vertices) { }
         
         public override string TypeOf { get { return typeOf; } }
-        private new string typeOf = "Void";
+        private new readonly string typeOf = "Void";
 
         public override double Area { get { return -base.Area; } }
         public override double StaticMomX { get { return -base.StaticMomX; } }

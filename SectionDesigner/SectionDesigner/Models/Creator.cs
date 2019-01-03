@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using System.Collections.ObjectModel;
 
 namespace Majstersztyk
 {
@@ -21,8 +22,8 @@ namespace Majstersztyk
 			return new TS_section(ReadParts(pathSec), ReadReoGroups(pathSec));
     	}
     	
-        private static List<TS_point> ReadPoints(string pathToTheFile){
-        	List<TS_point> lista = new List<TS_point>();
+        private static ObservableCollection<TS_point> ReadPoints(string pathToTheFile){
+        	ObservableCollection<TS_point> lista = new ObservableCollection<TS_point>();
 			string line;
             using (System.IO.StreamReader file = new System.IO.StreamReader(pathToTheFile)) //"..\..\input.txt")) 
             {

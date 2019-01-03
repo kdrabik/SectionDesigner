@@ -18,26 +18,55 @@ namespace Majstersztyk
     /// </summary>s
     /// 
 
-    public class TS_part : TS_contour {
-        public List<TS_void> Voids { get; private set; }
-        public TS_contour Contour { get; private set; }
-        public TS_materials.TS_material Material { get; private set; }
+    public class TS_part : TS_contour, INotifyPropertyChanged
+    {
+        private List<TS_void> _Voids;
+
+        public List<TS_void> Voids {
+            get { return _Voids; }
+            set { _Voids = value;
+                OnPropertyChanged("Voids");
+                CalcProperties();
+            }
+        }
+
+        private TS_contour _Contour;
+
+        public TS_contour Contour {
+            get { return _Contour; }
+            set {
+                _Contour = value;
+                OnPropertyChanged("Contour");
+                CalcProperties();
+            }
+        }
+
+        private TS_materials.TS_material _Material;
+
+        public TS_materials.TS_material Material {
+            get { return _Material; }
+            set { _Material = value;
+                OnPropertyChanged("Material");
+                CalcProperties();
+            }
+        }
+
         public List<TS_contour> GeometryComponents{
             get {
                 List<TS_contour> geomComp = new List<TS_contour>();
-                geomComp.Add(Contour);
-                geomComp.AddRange(Voids);
+                geomComp.Add(_Contour);
+                geomComp.AddRange(_Voids);
                 return geomComp;
-            } private set { } }
+            }}
 
         public override string TypeOf { get { return typeOf; } }
-        private new string typeOf = "Part";
+        private new readonly string typeOf = "Part";
 
         public TS_part(TS_materials.TS_material material, TS_contour contour, List<TS_void> voids):base()
         {
-			Material = material;
-            Voids = voids;
-            Contour = contour;
+			_Material = material;
+            _Voids = voids;
+            _Contour = contour;
             CalcProperties();
         }
         

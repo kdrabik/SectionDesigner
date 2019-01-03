@@ -8,29 +8,45 @@
  */
 using System;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace Majstersztyk
 {
 	/// <summary>
 	/// Description of TS_point.
 	/// </summary>
-	public class TS_point
+	public class TS_point:INotifyPropertyChanged
 	{
-		public double X {get; private set;}
-		public double Y {get; private set;}
+        private double _X;
+
+        public double X {
+            get { return _X; }
+            set { _X = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private double _Y;
+
+        public double Y {
+            get { return _Y; }
+            set { _Y = value;
+                OnPropertyChanged();
+            }
+        }
 		
 		public TS_point(){
-			X = Double.NaN;
-			Y = Double.NaN;
+			_X = Double.NaN;
+			_Y = Double.NaN;
 		}
 		
 		public TS_point(double X, double Y)
 		{
-			this.X = X;
-			this.Y = Y;
+			_X = X;
+			_Y = Y;
 		}
-		
-		public bool IsReal(){
+
+        public bool IsReal(){
 			if (Double.IsNaN(X) || Double.IsNaN(Y))
 				return false;
 			return true;
@@ -66,16 +82,28 @@ namespace Majstersztyk
 			if (TS_AreDoublesEqual(X, point2.X) && TS_AreDoublesEqual(Y, point2.Y)) return true;
 			return false;
 		}
-		
-		#region Equals and GetHashCode implementation
-		public override bool Equals(object obj)
+        #region InotifyPropertyChanged Members
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void OnPropertyChanged([CallerMemberName] string propertyName="") {
+            PropertyChangedEventHandler handler = PropertyChanged;
+
+            if (handler != null) {
+                handler(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+        #endregion
+        
+        #region Equals and GetHashCode implementation 
+  /*      public override bool Equals(object obj)
 		{
 			TS_point other = obj as TS_point;
 				if (other == null)
 					return false;
 			return TS_AreDoublesEqual(this.X, other.X) && TS_AreDoublesEqual(this.Y, other.Y);
 		}
-/*
+        */
+        /*
 		public override int GetHashCode()
 		{
 			int hashCode = 0;
@@ -85,7 +113,6 @@ namespace Majstersztyk
 			}
 			return hashCode;
 		}
-
 		public static bool operator ==(TS_point lhs, TS_point rhs) {
 			if (TS_AreDoublesEqual(lhs.X, rhs.X) && TS_AreDoublesEqual(lhs.Y, rhs.Y))
 				return true;
@@ -97,8 +124,8 @@ namespace Majstersztyk
 		public static bool operator !=(TS_point lhs, TS_point rhs) {
 			return !(lhs == rhs);
 		}
-*/
-		#endregion
+        */
+        #endregion
 
-	}
+    }
 }

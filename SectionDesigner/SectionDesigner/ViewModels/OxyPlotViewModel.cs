@@ -9,7 +9,15 @@ namespace SectionDesigner.ViewModels
 {
     public class OxyPlotViewModel : INotifyPropertyChanged
     {
-        public PlotModel SectionPlotModel { get; private set; }
+        private PlotModel _SectionPlotModel;
+
+        public PlotModel SectionPlotModel {
+            get { return _SectionPlotModel; }
+            set {
+                _SectionPlotModel = value;
+                OnPropertyChanged("SectionPlotModel");
+            }
+        }
 
         double generalThickness = 2.0;
 
@@ -144,7 +152,7 @@ namespace SectionDesigner.ViewModels
                 seria.MarkerType = MarkerType.Circle;
                 
                 foreach (var bar in reoGroup.Bars) {
-                    ScatterPoint point = new ScatterPoint(bar.coordinates.X, bar.coordinates.Y);
+                    ScatterPoint point = new ScatterPoint(bar.Coordinates.X, bar.Coordinates.Y);
                     point.Size = bar.Diameter*100;
                     seria.Points.Add(point);
                 }

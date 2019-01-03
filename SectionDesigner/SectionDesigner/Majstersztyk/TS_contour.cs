@@ -8,35 +8,48 @@
  */
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 
 namespace Majstersztyk
 {
 	/// <summary>
 	/// Description of TS_contour.
 	/// </summary>
-	public class TS_contour:TS_region
+	public class TS_contour:TS_region,INotifyPropertyChanged
     {
-        public List<TS_point> Vertices { get; protected set; }
-        public List<TS_side> Sides { get; protected set; }
+        private ObservableCollection<TS_point> _Vertices;
+
+        public ObservableCollection<TS_point> Vertices {
+            get { return _Vertices; }
+            set { _Vertices = value;
+                OnPropertyChanged("Vertices");
+                CalcProperties();
+            }
+        }
+
+        public ObservableCollection<TS_side> Sides { get; protected set; }
         public override string TypeOf { get { return typeOf; } }
-        private new string typeOf = "Contour";
+        private new readonly string typeOf = "Contour";
         
         protected TS_contour() {
-            Vertices = new List<TS_point>();
-            Sides = new List<TS_side>();
+            _Vertices = new ObservableCollection<TS_point>();
+            Sides = new ObservableCollection<TS_side>();
             Name = "Contour";
         }
 
-        public TS_contour(List<TS_point> vertices) {
+        public TS_contour(ObservableCollection<TS_point> vertices) {
             Update(vertices);
             Name = "Contour";
         }
 
-        public void Update(List<TS_point> vertices) {
-            Vertices = vertices;
+        public void Update(ObservableCollection<TS_point> vertices) {
+            _Vertices = vertices;
             if (CalcArea() < 0)
             {
-                Vertices.Reverse();
+                List<TS_point> vert2 = new List<TS_point>(_Vertices);
+                vert2.Reverse();
+                _Vertices = new ObservableCollection<TS_point>(vert2);
             }
 
             Sides = GenerateSides(vertices);
@@ -45,88 +58,88 @@ namespace Majstersztyk
 
         protected override double CalcArea() {
             double A = 0;
-            for (int i = 0; i < Vertices.Count; i++)
+            for (int i = 0; i < _Vertices.Count; i++)
             {
                 int j = IndexOfNextVertex(i);
-                A += ((Vertices[j].X - Vertices[i].X) * (Vertices[j].Y + Vertices[i].Y));
+                A += ((_Vertices[j].X - _Vertices[i].X) * (_Vertices[j].Y + _Vertices[i].Y));
             }
             return 1d / 2 * A;
         }
 
         protected override double CalcSx() {
             double Sx = 0;
-            for (int i = 0; i < Vertices.Count; i++)
+            for (int i = 0; i < _Vertices.Count; i++)
             {
                 int j = IndexOfNextVertex(i);
-                Sx += ((Vertices[j].X - Vertices[i].X) * (Vertices[i].Y * Vertices[i].Y + Vertices[i].Y * Vertices[j].Y + Vertices[j].Y * Vertices[j].Y));
+                Sx += ((_Vertices[j].X - _Vertices[i].X) * (_Vertices[i].Y * _Vertices[i].Y + _Vertices[i].Y * _Vertices[j].Y + _Vertices[j].Y * _Vertices[j].Y));
             }
             return 1d / 6 * Sx;
         }
 
         protected override double CalcSy() {
             double Sy = 0;
-            for (int i = 0; i < Vertices.Count; i++)
+            for (int i = 0; i < _Vertices.Count; i++)
             {
                 int j = IndexOfNextVertex(i);
-                Sy += ((Vertices[i].Y - Vertices[j].Y) * (Vertices[i].X * Vertices[i].X + Vertices[i].X * Vertices[j].X + Vertices[j].X * Vertices[j].X));
+                Sy += ((_Vertices[i].Y - _Vertices[j].Y) * (_Vertices[i].X * _Vertices[i].X + _Vertices[i].X * _Vertices[j].X + _Vertices[j].X * _Vertices[j].X));
             }
             return 1d / 6 * Sy;
         }
 
         protected override double CalcIx() {
             double Ix = 0;
-            for (int i = 0; i < Vertices.Count; i++)
+            for (int i = 0; i < _Vertices.Count; i++)
             {
                 int j = IndexOfNextVertex(i);
-                Ix += (Vertices[j].X - Vertices[i].X) *
-                    (Vertices[i].Y * Vertices[i].Y * Vertices[i].Y +
-                     Vertices[i].Y * Vertices[i].Y * Vertices[j].Y +
-                     Vertices[i].Y * Vertices[j].Y * Vertices[j].Y +
-                     Vertices[j].Y * Vertices[j].Y * Vertices[j].Y);
+                Ix += (_Vertices[j].X - _Vertices[i].X) *
+                    (_Vertices[i].Y * _Vertices[i].Y * _Vertices[i].Y +
+                     _Vertices[i].Y * _Vertices[i].Y * _Vertices[j].Y +
+                     _Vertices[i].Y * _Vertices[j].Y * _Vertices[j].Y +
+                     _Vertices[j].Y * _Vertices[j].Y * _Vertices[j].Y);
             }
             return 1d / 12 * Ix;
         }
 
         protected override double CalcIy() {
             double Iy = 0;
-            for (int i = 0; i < Vertices.Count; i++)
+            for (int i = 0; i < _Vertices.Count; i++)
             {
                 int j = IndexOfNextVertex(i);
-                Iy += (Vertices[i].Y - Vertices[j].Y) *
-                    (Vertices[i].X * Vertices[i].X * Vertices[i].X +
-                     Vertices[i].X * Vertices[i].X * Vertices[j].X +
-                     Vertices[i].X * Vertices[j].X * Vertices[j].X +
-                     Vertices[j].X * Vertices[j].X * Vertices[j].X);
+                Iy += (_Vertices[i].Y - _Vertices[j].Y) *
+                    (_Vertices[i].X * _Vertices[i].X * _Vertices[i].X +
+                     _Vertices[i].X * _Vertices[i].X * _Vertices[j].X +
+                     _Vertices[i].X * _Vertices[j].X * _Vertices[j].X +
+                     _Vertices[j].X * _Vertices[j].X * _Vertices[j].X);
             }
             return 1d / 12 * Iy;
         }
 
         protected override double CalcIxy() {
             double Ixy = 0;
-            for (int i = 0; i < Vertices.Count; i++)
+            for (int i = 0; i < _Vertices.Count; i++)
             {
                 int j = IndexOfNextVertex(i);
-                Ixy += (Vertices[j].X - Vertices[i].X) *
-                    (Vertices[i].X *
-                     (3 * Vertices[i].Y * Vertices[i].Y +
-                      Vertices[j].Y * Vertices[j].Y +
-                      2 * Vertices[i].Y * Vertices[j].Y) +
-                     (Vertices[j].X *
-                      (3 * Vertices[j].Y * Vertices[j].Y +
-                       Vertices[i].Y * Vertices[i].Y +
-                       2 * Vertices[i].Y * Vertices[j].Y)));
+                Ixy += (_Vertices[j].X - _Vertices[i].X) *
+                    (_Vertices[i].X *
+                     (3 * _Vertices[i].Y * _Vertices[i].Y +
+                      _Vertices[j].Y * _Vertices[j].Y +
+                      2 * _Vertices[i].Y * _Vertices[j].Y) +
+                     (_Vertices[j].X *
+                      (3 * _Vertices[j].Y * _Vertices[j].Y +
+                       _Vertices[i].Y * _Vertices[i].Y +
+                       2 * _Vertices[i].Y * _Vertices[j].Y)));
             }
             return 1d / 24 * Ixy;
         }
         
         protected int IndexOfNextVertex(int currentVertex)
         {
-            return (currentVertex + 1) % Vertices.Count;
+            return (currentVertex + 1) % _Vertices.Count;
         }
 
-        protected static List<TS_side> GenerateSides(List<TS_point> points)
+        protected static ObservableCollection<TS_side> GenerateSides(ObservableCollection<TS_point> points)
         {
-            List<TS_side> sides = new List<TS_side>();
+            ObservableCollection<TS_side> sides = new ObservableCollection<TS_side>();
             for (int i = 0; i < points.Count; i++)
             {
                 int j = (i + 1) % points.Count;
@@ -137,6 +150,9 @@ namespace Majstersztyk
 
         protected override bool IsObjectCorrect()
         {
+            if (_Vertices.Count < 3)
+                return false;
+            
             for (int i = 0; i < Sides.Count; i++)
             {
                 for (int j = 0; j < Sides.Count; j++)
@@ -158,7 +174,7 @@ namespace Majstersztyk
 			}
 			
 			TS_line horLine = new TS_line(0, point.Y);
-			List<TS_point> horPoints = new List<TS_point>();
+			ObservableCollection<TS_point> horPoints = new ObservableCollection<TS_point>();
 			
 			foreach (var side in Sides) {
 				TS_point pointX = side.CrossedPoint(horLine);
@@ -171,7 +187,7 @@ namespace Majstersztyk
 			if (countH % 2 != 0) return true;
 			
 			TS_line vertLine = new TS_line(1, 0, -point.X);
-			List<TS_point> vertPoints = new List<TS_point>();
+			ObservableCollection<TS_point> vertPoints = new ObservableCollection<TS_point>();
 			
 			foreach (var side in Sides) {
 				TS_point pointY = side.CrossedPoint(vertLine);
@@ -184,7 +200,7 @@ namespace Majstersztyk
 			if (countV % 2 != 0) return true;
 			
 			TS_line horLineL = new TS_line(0, point.Y);
-			List<TS_point> horPointsL = new List<TS_point>();
+			ObservableCollection<TS_point> horPointsL = new ObservableCollection<TS_point>();
 			
 			foreach (var side in Sides) {
 				TS_point pointX = side.CrossedPoint(horLineL);
@@ -196,7 +212,7 @@ namespace Majstersztyk
 			int countHL = horPointsL.Count;
 			if (countHL % 2 != 0) return true;
 			
-			List<TS_point> vertPointsD = new List<TS_point>();
+			ObservableCollection<TS_point> vertPointsD = new ObservableCollection<TS_point>();
 			
 			foreach (var side in Sides) {
 				TS_point pointY = side.CrossedPoint(vertLine);
@@ -212,7 +228,7 @@ namespace Majstersztyk
         }
         
         public bool IsAVertex(TS_point point){
-        	foreach (var vertex in Vertices) {
+        	foreach (var vertex in _Vertices) {
         		if (AreDoublesEqual(vertex.X,point.X) && AreDoublesEqual(vertex.Y,point.Y)) {
 					return true;
         		}
@@ -224,6 +240,8 @@ namespace Majstersztyk
 		{
 			return Environment.NewLine + base.ToString();
 		}
+
+
 
     }
 }

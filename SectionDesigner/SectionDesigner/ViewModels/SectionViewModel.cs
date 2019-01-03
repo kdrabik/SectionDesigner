@@ -34,8 +34,13 @@
 		
 		private TS_section _Section;
 		public TS_section Section {
+            set {
+                _Section = value;
+                OnPropertyChanged("Section");
+                OxyPreview.DrawSection(_Section);
+            }
 			get {
-				return _Section;
+                return _Section;
 			}
 		}
         /*  NAJPRAWDOPODOBNIEJ NIEPOTRZEBNE 

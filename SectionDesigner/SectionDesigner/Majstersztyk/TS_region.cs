@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace Majstersztyk
 {
@@ -11,7 +12,14 @@ namespace Majstersztyk
     {
         public bool IsCorrect { get { return IsObjectCorrect(); } }
 
-        public string Name { get; set; }
+        private string _Name;
+
+        public string Name {
+            get { return _Name; }
+            set { _Name = value;
+                OnPropertyChanged();
+            }
+        }
 
         public virtual double Area { get; protected set; }
         public virtual double StaticMomX { get; protected set; }
@@ -114,7 +122,7 @@ namespace Majstersztyk
 	
 		public event PropertyChangedEventHandler PropertyChanged;
 	
-		private void OnPropertyChanged(string propertyName) {
+		protected void OnPropertyChanged([CallerMemberName] string propertyName="") {
 			PropertyChangedEventHandler handler = PropertyChanged;
 			
 			if (handler != null) {
