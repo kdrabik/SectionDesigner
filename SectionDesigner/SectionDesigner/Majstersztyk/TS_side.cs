@@ -23,15 +23,15 @@ namespace Majstersztyk
 
         public TS_point StartPoint {
             get { return _StartPoint; }
-            set {
+            set {/*
                 if (_StartPoint != null)
                     _StartPoint.PropertyChanged -= Side_PropertyChanged;
-
+                    */
                 _StartPoint = value;
-
+                /*
                 if (_StartPoint != null) {
                     _StartPoint.PropertyChanged += Side_PropertyChanged;
-                }
+                }*/
 
                 OnPropertyChanged();
             }
@@ -41,16 +41,16 @@ namespace Majstersztyk
 
         public TS_point EndPoint {
             get { return _EndPoint; }
-            set {
+            set {/*
                 if (_EndPoint != null)
                     _EndPoint.PropertyChanged -= Side_PropertyChanged;
-
+                    */
                 _EndPoint = value;
-
+                /*
                 if (_EndPoint != null) {
                     _EndPoint.PropertyChanged += Side_PropertyChanged;
                 }
-
+                */
                 OnPropertyChanged();
             }
         }
@@ -150,7 +150,7 @@ namespace Majstersztyk
         #endregion
 
         void Side_PropertyChanged(object sender, PropertyChangedEventArgs args) {
-            ReCalcMe();
+            //ReCalcMe();
         }
     }
 }

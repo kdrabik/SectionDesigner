@@ -82,6 +82,7 @@ namespace Majstersztyk
 			if (TS_AreDoublesEqual(X, point2.X) && TS_AreDoublesEqual(Y, point2.Y)) return true;
 			return false;
 		}
+
         #region InotifyPropertyChanged Members
         public event PropertyChangedEventHandler PropertyChanged;
 

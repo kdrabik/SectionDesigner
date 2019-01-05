@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using SectionDesigner;
 
 namespace Majstersztyk
 {
@@ -18,64 +19,56 @@ namespace Majstersztyk
 	/// </summary>
 	public class TS_section : TS_region, INotifyPropertyChanged
 	{
-        private List<TS_part> _Parts;
+        private ObservableList<TS_part> _Parts;
 
-        public List<TS_part> Parts {
+        public ObservableList<TS_part> Parts {
             get { return _Parts; }
             set {
+                if (_Parts != null)
+                    _Parts.PropertyChanged -= Section_OnPropertyChanged;
+
                 _Parts = value;
-                OnPropertyChanged("Parts");
-                CalcProperties();
+
+                if (_Parts != null) {
+                    _Parts.PropertyChanged += Section_OnPropertyChanged;
+                }
+                OnPropertyChanged();
             }
         }
 
-        private List<TS_reinforcement> _Reinforcement;
+        private ObservableList<TS_reinforcement> _Reinforcement;
 
-        public List<TS_reinforcement> Reinforcement {
+        public ObservableList<TS_reinforcement> Reinforcement {
             get { return _Reinforcement; }
             set {
+                if (_Reinforcement != null)
+                    _Reinforcement.PropertyChanged -= Section_OnPropertyChanged;
+
                 _Reinforcement = value;
-                OnPropertyChanged("Reinforcement");
-                CalcProperties();
+
+                if (_Reinforcement != null) {
+                    _Reinforcement.PropertyChanged += Section_OnPropertyChanged;
+                }
+                OnPropertyChanged();
             }
         }
-
-        public List<TS_region> Components {
-            get {
-                List<TS_region> geomComp = new List<TS_region>();
-                //geomComp.Add(_Parts);         JAK TO ROZWIĄZAĆ?! !!!!!!!!!!!!!!
-                geomComp.AddRange(_Reinforcement);
-                return geomComp;
-            } }
 
         public override string TypeOf { get { return typeOf; } }
         private new readonly string typeOf = "Section";
-        /*
-		public double Area {get; private set;}
-		public double StaticMomX {get; private set;}
-		public double StaticMomY {get; private set;}
-		public double InertiaMomX {get; private set;}
-		public double InertiaMomY {get; private set;}
-		public double DeviationMomXY {get; private set;}
-		public TS_point Centroid {get; private set;}
-        */
+
         public TS_section() {
-            _Parts = new List<TS_part>();
-            _Reinforcement = new List<TS_reinforcement>();
+            Parts = new ObservableList<TS_part>();
+            Reinforcement = new ObservableList<TS_reinforcement>();
+            Name = "Section_1";
         }
 				
-		public TS_section(List<TS_part> parts, List<TS_reinforcement> reinforcement)
+		public TS_section(List<TS_part> parts, List<TS_reinforcement> reinforcement):this()
 		{
-            Update(parts, reinforcement);
+            Parts.AddRange(parts);
+            Reinforcement.AddRange(reinforcement);
 		}
-
-        public void Update(List<TS_part> parts, List<TS_reinforcement> reinforcement)
-        {
-            _Parts = parts;
-            _Reinforcement = reinforcement;
-            CalcProperties();
-        }
         
+        #region Calculation
         protected override double CalcArea()
         {
             double area = 0;
@@ -231,7 +224,11 @@ namespace Majstersztyk
             tg2fi0 = 2 * CentrDeviationMom_XY / (CentrInertiaMom_X - CentrInertiaMom_Y);
             return (Math.Atan(tg2fi0) / 2);// - Math.PI / 2;
         }
-        
+
+        #endregion
+
+        #region Helps
+
         public override string ToString()
 		{
 			string text = "";
@@ -247,8 +244,6 @@ namespace Majstersztyk
 			
 			return text;
 		}
-
-        
 
         /*
 		public static List<TS_point> TransformByMoving(List<TS_point> Vertices, TS_point newCenterPoint) {
@@ -275,6 +270,11 @@ namespace Majstersztyk
 			return TransformByRotating(TransformByMoving(Vertices, newCenterPoint), angle);
 		}
 		*/
+        #endregion
 
+        protected void Section_OnPropertyChanged(object sender, PropertyChangedEventArgs args) {
+            if (_Parts != null && _Reinforcement != null)
+                CalcProperties();
+        }
     }
 }

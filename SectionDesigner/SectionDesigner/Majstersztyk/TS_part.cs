@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using SectionDesigner;
 
 namespace Majstersztyk
 {
@@ -18,15 +19,22 @@ namespace Majstersztyk
     /// </summary>s
     /// 
 
-    public class TS_part : TS_contour, INotifyPropertyChanged
+    public class TS_part : TS_region, INotifyPropertyChanged
     {
-        private List<TS_void> _Voids;
+        private ObservableList<TS_void> _Voids;
 
-        public List<TS_void> Voids {
+        public ObservableList<TS_void> Voids {
             get { return _Voids; }
-            set { _Voids = value;
-                OnPropertyChanged("Voids");
-                CalcProperties();
+            set {
+                if (_Voids != null)
+                    _Voids.PropertyChanged -= Part_OnPropertyChanged;
+
+                _Voids = value;
+
+                if (_Voids != null) {
+                    _Voids.PropertyChanged += Part_OnPropertyChanged;
+                }
+                OnPropertyChanged();
             }
         }
 
@@ -35,9 +43,15 @@ namespace Majstersztyk
         public TS_contour Contour {
             get { return _Contour; }
             set {
+                if (_Contour != null)
+                    _Contour.PropertyChanged -= Part_OnPropertyChanged;
+
                 _Contour = value;
-                OnPropertyChanged("Contour");
-                CalcProperties();
+
+                if (_Contour != null) {
+                    _Contour.PropertyChanged += Part_OnPropertyChanged;
+                }
+                OnPropertyChanged();
             }
         }
 
@@ -45,31 +59,45 @@ namespace Majstersztyk
 
         public TS_materials.TS_material Material {
             get { return _Material; }
-            set { _Material = value;
-                OnPropertyChanged("Material");
-                CalcProperties();
+            set {
+                if (_Material != null)
+                    _Material.PropertyChanged -= Part_OnPropertyChanged;
+
+                _Material = value;
+
+                if (_Material != null) {
+                    _Material.PropertyChanged += Part_OnPropertyChanged;
+                }
+                OnPropertyChanged();
             }
         }
 
-        public List<TS_contour> GeometryComponents{
-            get {
-                List<TS_contour> geomComp = new List<TS_contour>();
+        private ObservableList<TS_contour> _GeometryComponents;
+
+        public ObservableList<TS_contour> GeometryComponents{
+            get { return _GeometryComponents; }
+            private set {
+                ObservableList<TS_contour> geomComp = new ObservableList<TS_contour>();
                 geomComp.Add(_Contour);
                 geomComp.AddRange(_Voids);
-                return geomComp;
-            }}
+                _GeometryComponents = geomComp;
+                OnPropertyChanged();
+            }
+        }
 
         public override string TypeOf { get { return typeOf; } }
         private new readonly string typeOf = "Part";
 
-        public TS_part(TS_materials.TS_material material, TS_contour contour, List<TS_void> voids):base()
+        public TS_part(TS_materials.TS_material material, TS_contour contour, List<TS_void> voids)
         {
-			_Material = material;
-            _Voids = voids;
-            _Contour = contour;
-            CalcProperties();
+			Material = material;
+            Voids = new ObservableList<TS_void>();
+            Contour = contour;
+            Voids.AddRange(voids);
+            GeometryComponents = null;
         }
-        
+
+        #region Calculation
         protected override double CalcArea()
         {
             double area = Contour.Area;
@@ -118,7 +146,9 @@ namespace Majstersztyk
             }
 			return ixy; 
         }
-        
+        #endregion
+
+        #region Helps
         protected override bool IsObjectCorrect()
         {
             if (!Contour.IsCorrect)
@@ -163,6 +193,13 @@ namespace Majstersztyk
 			}
 			return text;
 		}
+        #endregion
 
+        protected void Part_OnPropertyChanged(object sender, PropertyChangedEventArgs args) {
+            if (_Material != null && _Voids != null && _Contour != null) {
+                CalcProperties();
+                OnPropertyChanged();
+            }
+        }
     }
 }

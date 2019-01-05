@@ -9,53 +9,60 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using SectionDesigner;
 
 namespace Majstersztyk
 {
 	/// <summary>
 	/// Description of TS_contour.
 	/// </summary>
-	public class TS_contour:TS_region,INotifyPropertyChanged
+	public class TS_contour : TS_region, INotifyPropertyChanged
     {
-        private ObservableCollection<TS_point> _Vertices;
+        private ObservableList<TS_point> _Vertices;
 
-        public ObservableCollection<TS_point> Vertices {
+        public ObservableList<TS_point> Vertices {
             get { return _Vertices; }
-            set { _Vertices = value;
-                OnPropertyChanged("Vertices");
-                CalcProperties();
+            set {
+                if (_Vertices != null) {
+                    _Vertices.PropertyChanged -= Contour_OnPropertyChanged;
+                    _Vertices.CollectionChanged -= Contour_OnCollectionChanged;
+                }
+
+                _Vertices = value;
+
+                if (_Vertices != null) {
+                    _Vertices.PropertyChanged += Contour_OnPropertyChanged;
+                    _Vertices.CollectionChanged += Contour_OnCollectionChanged;
+                }
+
+                OnPropertyChanged();
             }
         }
 
-        public ObservableCollection<TS_side> Sides { get; protected set; }
+        public List<TS_side> Sides { get { return GenerateSides(Vertices); } }
         public override string TypeOf { get { return typeOf; } }
         private new readonly string typeOf = "Contour";
         
         protected TS_contour() {
-            _Vertices = new ObservableCollection<TS_point>();
-            Sides = new ObservableCollection<TS_side>();
+            Vertices = new ObservableList<TS_point>();
             Name = "Contour";
-        }
-
-        public TS_contour(ObservableCollection<TS_point> vertices) {
-            Update(vertices);
-            Name = "Contour";
-        }
-
-        public void Update(ObservableCollection<TS_point> vertices) {
-            _Vertices = vertices;
-            if (CalcArea() < 0)
-            {
-                List<TS_point> vert2 = new List<TS_point>(_Vertices);
-                vert2.Reverse();
-                _Vertices = new ObservableCollection<TS_point>(vert2);
-            }
-
-            Sides = GenerateSides(vertices);
             CalcProperties();
         }
 
+        public TS_contour(List<TS_point> vertices) : this() {
+            Vertices.AddRange(vertices);
+
+            if (CalcArea() < 0) {
+                Vertices.Reverse();
+            }
+
+            //Sides.AddRange(GenerateSides(Vertices));
+        }
+
+        #region Calculations
         protected override double CalcArea() {
             double A = 0;
             for (int i = 0; i < _Vertices.Count; i++)
@@ -131,15 +138,17 @@ namespace Majstersztyk
             }
             return 1d / 24 * Ixy;
         }
-        
+        #endregion
+
+        #region Helps
         protected int IndexOfNextVertex(int currentVertex)
         {
             return (currentVertex + 1) % _Vertices.Count;
         }
 
-        protected static ObservableCollection<TS_side> GenerateSides(ObservableCollection<TS_point> points)
+        protected static List<TS_side> GenerateSides(ObservableList<TS_point> points)
         {
-            ObservableCollection<TS_side> sides = new ObservableCollection<TS_side>();
+            List<TS_side> sides = new List<TS_side>();
             for (int i = 0; i < points.Count; i++)
             {
                 int j = (i + 1) % points.Count;
@@ -174,7 +183,7 @@ namespace Majstersztyk
 			}
 			
 			TS_line horLine = new TS_line(0, point.Y);
-			ObservableCollection<TS_point> horPoints = new ObservableCollection<TS_point>();
+			ObservableList<TS_point> horPoints = new ObservableList<TS_point>();
 			
 			foreach (var side in Sides) {
 				TS_point pointX = side.CrossedPoint(horLine);
@@ -187,7 +196,7 @@ namespace Majstersztyk
 			if (countH % 2 != 0) return true;
 			
 			TS_line vertLine = new TS_line(1, 0, -point.X);
-			ObservableCollection<TS_point> vertPoints = new ObservableCollection<TS_point>();
+			List<TS_point> vertPoints = new List<TS_point>();
 			
 			foreach (var side in Sides) {
 				TS_point pointY = side.CrossedPoint(vertLine);
@@ -200,7 +209,7 @@ namespace Majstersztyk
 			if (countV % 2 != 0) return true;
 			
 			TS_line horLineL = new TS_line(0, point.Y);
-			ObservableCollection<TS_point> horPointsL = new ObservableCollection<TS_point>();
+			List<TS_point> horPointsL = new List<TS_point>();
 			
 			foreach (var side in Sides) {
 				TS_point pointX = side.CrossedPoint(horLineL);
@@ -212,7 +221,7 @@ namespace Majstersztyk
 			int countHL = horPointsL.Count;
 			if (countHL % 2 != 0) return true;
 			
-			ObservableCollection<TS_point> vertPointsD = new ObservableCollection<TS_point>();
+			List<TS_point> vertPointsD = new List<TS_point>();
 			
 			foreach (var side in Sides) {
 				TS_point pointY = side.CrossedPoint(vertLine);
@@ -235,13 +244,21 @@ namespace Majstersztyk
         	}
 			return false;
         }
-        
-		public override string ToString()
+        #endregion
+
+        public override string ToString()
 		{
 			return Environment.NewLine + base.ToString();
 		}
 
+        protected void Contour_OnPropertyChanged(object sender, PropertyChangedEventArgs args) {
+            CalcProperties();
+            OnPropertyChanged();
+        }
 
-
+        protected void Contour_OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
+            //CalcProperties();
+            //();
+        }
     }
 }

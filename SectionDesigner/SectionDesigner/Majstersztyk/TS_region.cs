@@ -5,11 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Collections.Specialized;
+using System.Collections.ObjectModel;
 
 namespace Majstersztyk
 {
     public abstract class TS_region : INotifyPropertyChanged
     {
+        #region Properties
         public bool IsCorrect { get { return IsObjectCorrect(); } }
 
         private string _Name;
@@ -20,14 +23,44 @@ namespace Majstersztyk
                 OnPropertyChanged();
             }
         }
+        private double _Area; 
+        public virtual double Area {
+            get { return _Area; }
+            protected set { _Area = value; OnPropertyChanged(); } }
 
-        public virtual double Area { get; protected set; }
-        public virtual double StaticMomX { get; protected set; }
-        public virtual double StaticMomY { get; protected set; }
-        public virtual double InertiaMomX { get; protected set; }
-        public virtual double InertiaMomY { get; protected set; }
-        public virtual double DeviationMomXY { get; protected set; }
-        public virtual TS_point Centroid { get; protected set; }
+        private double _StaticMomX;
+        public virtual double StaticMomX {
+            get { return _StaticMomX; }
+            protected set { _StaticMomX = value; OnPropertyChanged(); } }
+
+        private double _StaticMomY;
+        public virtual double StaticMomY {
+            get { return _StaticMomY; }
+            protected set { _StaticMomY = value; OnPropertyChanged(); }
+        }
+
+        private double _InertiaMomX;
+        public virtual double InertiaMomX {
+            get { return _InertiaMomX; }
+            protected set { _InertiaMomX = value; OnPropertyChanged(); }
+        }
+
+        private double _InertiaMomY;
+        public virtual double InertiaMomY {
+            get { return _InertiaMomY; }
+            protected set { _InertiaMomY = value; OnPropertyChanged(); }
+        }
+
+        private double _DeviationMomXY;
+        public virtual double DeviationMomXY {
+            get { return _DeviationMomXY; }
+            protected set { _DeviationMomXY = value; OnPropertyChanged(); } }
+
+        private TS_point _Centroid;
+        public virtual TS_point Centroid {
+            get { return _Centroid; }
+            protected set { _Centroid = value; OnPropertyChanged(); } }
+
         public virtual double CentrInertiaMom_X { get; protected set; }
         public virtual double CentrInertiaMom_Y { get; protected set; }
         public virtual double CentrDeviationMom_XY { get; protected set; }
@@ -36,7 +69,10 @@ namespace Majstersztyk
         public virtual double AngleOfPrincipleLayout { get; protected set; }
         public virtual string TypeOf {get{return typeOf;}}
 		protected string typeOf;
-        
+
+        #endregion
+
+        #region Calculation Methods
         protected abstract double CalcArea();
         protected abstract double CalcSx();
         protected abstract double CalcSy();
@@ -47,7 +83,7 @@ namespace Majstersztyk
         protected abstract bool IsObjectCorrect();
         //public abstract void Update();
 
-        protected void CalcProperties()
+        protected virtual void CalcProperties()
         {
             Area = CalcArea();
             StaticMomX = CalcSx();
@@ -65,15 +101,6 @@ namespace Majstersztyk
         {
             return new TS_point(StaticMomY / Area, StaticMomX / Area);
         }
-        
-        public static bool AreDoublesEqual(double d1, double d2)
-		{
-        	double diff = Math.Abs(Math.Min(d1,d2)/1000000);
-			
-			if (Math.Abs(d1-d2) <= diff) return true;
-			
-			return false;
-		}
 
         protected virtual void CalcCentralProp() {
             CentrInertiaMom_X = InertiaMomX - Math.Pow(Centroid.Y, 2) * Area;
@@ -92,6 +119,16 @@ namespace Majstersztyk
                 1d / 2 * Math.Sqrt(Math.Pow(CentrInertiaMom_X - CentrInertiaMom_Y, 2) + 4 * Math.Pow(CentrDeviationMom_XY, 2));
             CentrPrincipleInertiaMom_2 = 1d / 2 * (CentrInertiaMom_X + CentrInertiaMom_Y) -
             1d / 2 * Math.Sqrt(Math.Pow(CentrInertiaMom_X - CentrInertiaMom_Y, 2) + 4 * Math.Pow(CentrDeviationMom_XY, 2));
+        }
+
+        #endregion
+
+        public static bool AreDoublesEqual(double d1, double d2) {
+            double diff = Math.Abs(Math.Min(d1, d2) / 1000000);
+
+            if (Math.Abs(d1 - d2) <= diff) return true;
+
+            return false;
         }
 
         public override string ToString() {
@@ -126,9 +163,18 @@ namespace Majstersztyk
 			PropertyChangedEventHandler handler = PropertyChanged;
 			
 			if (handler != null) {
-				handler(this, new PropertyChangedEventArgs(propertyName));
+                handler(this, new PropertyChangedEventArgs(propertyName));
 			}
 		}
-		#endregion
+
+        #endregion
+        
+        protected virtual void Region_OnPropertyChanged(object sender, PropertyChangedEventArgs args) {
+            CalcProperties();
+        }
+        
+        protected virtual void Region_OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
+            CalcProperties();
+        }
     }
 }

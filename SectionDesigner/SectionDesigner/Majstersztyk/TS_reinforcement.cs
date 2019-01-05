@@ -4,18 +4,31 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
+using SectionDesigner;
+using System.Collections.Specialized;
 
 namespace Majstersztyk
 {
     public class TS_reinforcement:TS_region
     {
-        private List<TS_bar> _Bars;
+        private ObservableList<TS_bar> _Bars;
 
-        public List<TS_bar> Bars {
+        public ObservableList<TS_bar> Bars {
             get { return _Bars; }
-            set { _Bars = value;
-                OnPropertyChanged("Bars");
-                CalcProperties();
+            set {
+                if (_Bars != null) {
+                    _Bars.PropertyChanged -= Reinforcement_OnPropertyChanged;
+                    _Bars.CollectionChanged -= Reinforcement_OnCollectionChanged;
+                }
+
+                _Bars = value;
+
+                if (_Bars != null) {
+                    _Bars.PropertyChanged += Reinforcement_OnPropertyChanged;
+                    _Bars.CollectionChanged += Reinforcement_OnCollectionChanged;
+                }
+
+                OnPropertyChanged();
             }
         }
 
@@ -23,9 +36,16 @@ namespace Majstersztyk
 
         public TS_materials.TS_material Material {
             get { return _Material; }
-            set { _Material = value;
-                OnPropertyChanged("Material");
-                CalcProperties();
+            set {
+                if (_Material != null)
+                    _Material.PropertyChanged -= Reinforcement_OnPropertyChanged;
+
+                _Material = value;
+
+                if (_Material != null) {
+                    _Material.PropertyChanged += Reinforcement_OnPropertyChanged;
+                }
+                OnPropertyChanged();
             }
         }
 
@@ -33,16 +53,18 @@ namespace Majstersztyk
         private new readonly string typeOf = "Reinforcement";
 
         public TS_reinforcement() {
-            _Bars = new List<TS_bar>();
-            _Material = null;
-        }
-
-        public TS_reinforcement(List<TS_bar> bars, TS_materials.TS_material material) {
-            _Bars = bars;
-            _Material = material;
+            Bars = new ObservableList<TS_bar>();
+            Material = null;
+            Name = "Reinforcement";
             CalcProperties();
         }
 
+        public TS_reinforcement(List<TS_bar> bars, TS_materials.TS_material material):this() {
+            Material = material;
+            Bars.AddRange(bars);
+        }
+
+        #region Calculation Methods
         protected override double CalcArea(){
 			double area = 0;
         	foreach (var bar in _Bars) {
@@ -102,6 +124,7 @@ namespace Majstersztyk
             CentrInertiaMom_Y = centry;
             CentrDeviationMom_XY = centrxy;
         }
+        #endregion
 
         protected override bool IsObjectCorrect(){
         	for (int i = 0; i < _Bars.Count; i++) {
@@ -128,5 +151,15 @@ namespace Majstersztyk
 			return text;
 		}
         
+        protected void Reinforcement_OnPropertyChanged(object sender, PropertyChangedEventArgs args) {
+            CalcProperties();
+            OnPropertyChanged();
+        }
+
+        protected void Reinforcement_OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
+            //CalcProperties();
+            //();
+        }
+
     }
 }

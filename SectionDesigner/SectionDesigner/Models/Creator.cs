@@ -22,8 +22,8 @@ namespace Majstersztyk
 			return new TS_section(ReadParts(pathSec), ReadReoGroups(pathSec));
     	}
     	
-        private static ObservableCollection<TS_point> ReadPoints(string pathToTheFile){
-        	ObservableCollection<TS_point> lista = new ObservableCollection<TS_point>();
+        private static List<TS_point> ReadPoints(string pathToTheFile){
+            List<TS_point> lista = new List<TS_point>();
 			string line;
             using (System.IO.StreamReader file = new System.IO.StreamReader(pathToTheFile)) //"..\..\input.txt")) 
             {
