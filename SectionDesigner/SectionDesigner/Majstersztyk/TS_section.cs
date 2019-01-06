@@ -273,8 +273,10 @@ namespace Majstersztyk
         #endregion
 
         protected void Section_OnPropertyChanged(object sender, PropertyChangedEventArgs args) {
-            if (_Parts != null && _Reinforcement != null)
+            if (_Parts != null && _Reinforcement != null) {
                 CalcProperties();
+                //OnPropertyChanged();
+            }
         }
     }
 }

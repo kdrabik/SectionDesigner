@@ -8,18 +8,19 @@
 	using System.ComponentModel;
 	using System.Collections.ObjectModel;
 	using System.Windows.Controls;
+    using System.Runtime.CompilerServices;
 
-	internal class SectionViewModel : INotifyPropertyChanged
+    internal class SectionViewModel : INotifyPropertyChanged
 	{
         public OxyPlotViewModel OxyPreview { get; set; }
 
         public SectionViewModel() {
-			_Section = Creator.ReadSection();
+			Section = Creator.ReadSection();
 			//_Selected = SectionProp.SelectedContent as TS_part;
 			UpdateCommand = new SectionUpdateCommand(this);
             OxyPreview = new OxyPlotViewModel();
             //OxyPreview.AddPart(_Section.Parts[0]);
-            OxyPreview.DrawSection(_Section);
+            OxyPreview.Section = Section;
         }
 		
 		public bool CanUpdate {
@@ -36,8 +37,7 @@
 		public TS_section Section {
             set {
                 _Section = value;
-                OnPropertyChanged("Section");
-                OxyPreview.DrawSection(_Section);
+                OnPropertyChanged();
             }
 			get {
                 return _Section;
@@ -78,7 +78,7 @@
 	
 		public event PropertyChangedEventHandler PropertyChanged;
 	
-		private void OnPropertyChanged(string propertyName) {
+		private void OnPropertyChanged([CallerMemberName] string propertyName="") {
 			PropertyChangedEventHandler handler = PropertyChanged;
 			
 			if (handler != null) {

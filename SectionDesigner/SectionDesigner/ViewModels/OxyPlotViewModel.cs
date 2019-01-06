@@ -4,30 +4,46 @@ using Majstersztyk;
 using System.ComponentModel;
 using System;
 using OxyPlot.Series;
+using System.Runtime.CompilerServices;
 
 namespace SectionDesigner.ViewModels
 {
     public class OxyPlotViewModel : INotifyPropertyChanged
     {
         private PlotModel _SectionPlotModel;
-
         public PlotModel SectionPlotModel {
             get { return _SectionPlotModel; }
             set {
                 _SectionPlotModel = value;
-                OnPropertyChanged("SectionPlotModel");
+                OnPropertyChanged();
+            }
+        }
+
+        private TS_section _Section;
+        public TS_section Section {
+            get { return _Section; }
+            set {
+                if (_Section != null) {
+                    _Section.PropertyChanged -= PlotView_PropertyChanged;
+                }
+                _Section = value;
+                if (_Section != null) {
+                    _Section.PropertyChanged += PlotView_PropertyChanged;
+                }
+                DrawSection();
+                OnPropertyChanged();
             }
         }
 
         double generalThickness = 2.0;
 
-        private void SetUpGraph() {
-            SectionPlotModel.PlotType = PlotType.XY;
-            SectionPlotModel.Axes.Clear();
-            SectionPlotModel.Axes.Add(new OxyPlot.Axes.LinearAxis());
-            SectionPlotModel.Axes.Add(new OxyPlot.Axes.LinearAxis());
-            SectionPlotModel.Axes[0].Position = OxyPlot.Axes.AxisPosition.Left;
-            SectionPlotModel.Axes[1].Position = OxyPlot.Axes.AxisPosition.Bottom;
+        private void SetUpGraph(PlotModel sectionPlotModel) {
+            sectionPlotModel.PlotType = PlotType.XY;
+            sectionPlotModel.Axes.Clear();
+            sectionPlotModel.Axes.Add(new OxyPlot.Axes.LinearAxis());
+            sectionPlotModel.Axes.Add(new OxyPlot.Axes.LinearAxis());
+            sectionPlotModel.Axes[0].Position = OxyPlot.Axes.AxisPosition.Left;
+            sectionPlotModel.Axes[1].Position = OxyPlot.Axes.AxisPosition.Bottom;
             /*SectionPlotModel.Axes[0].PositionAtZeroCrossing = true;
             SectionPlotModel.Axes[1].PositionAtZeroCrossing = true;
             SectionPlotModel.Axes[0].AxislineStyle = LineStyle.Solid;
@@ -43,7 +59,7 @@ namespace SectionDesigner.ViewModels
             SectionPlotModel.Axes[0].MinorGridlineThickness = 0.75;
             SectionPlotModel.Axes[1].MinorGridlineThickness = 0.75;*/
 
-            foreach (var axis in SectionPlotModel.Axes) {
+            foreach (var axis in sectionPlotModel.Axes) {
                 axis.Layer = OxyPlot.Axes.AxisLayer.AboveSeries;
                 axis.PositionAtZeroCrossing = true;
                 axis.AxislineStyle = LineStyle.Solid;
@@ -58,18 +74,15 @@ namespace SectionDesigner.ViewModels
 
             }
 
-            SectionPlotModel.LegendPosition = LegendPosition.BottomCenter;
-            SectionPlotModel.LegendOrientation = LegendOrientation.Horizontal;
-            SectionPlotModel.LegendPlacement = LegendPlacement.Outside;
+            sectionPlotModel.LegendPosition = LegendPosition.BottomCenter;
+            sectionPlotModel.LegendOrientation = LegendOrientation.Horizontal;
+            sectionPlotModel.LegendPlacement = LegendPlacement.Outside;
 
-            SectionPlotModel.LegendSymbolLength = 40;
+            sectionPlotModel.LegendSymbolLength = 40;
             
         }
 
-        public OxyPlotViewModel() {
-            SectionPlotModel = new PlotModel();
-            SetUpGraph();
-        }
+        public OxyPlotViewModel() {}
 
         /*public void AddPart(TS_part part) {
             OxyPlot.Series.LineSeries seria = new OxyPlot.Series.LineSeries();
@@ -100,12 +113,16 @@ namespace SectionDesigner.ViewModels
         }
         */
 
-        public void DrawSection(TS_section section) {
+        private void DrawSection() {
+            PlotModel sectionPlotModel = new PlotModel();
+
+            SectionPlotModel = new PlotModel();
+            SetUpGraph(sectionPlotModel);
 
             Random rand = new Random();
             byte[] byteColor = new byte[3];
 
-            foreach (var part in section.Parts) {
+            foreach (var part in Section.Parts) {
 
                 OxyColor randomColor;
                 rand.NextBytes(byteColor);
@@ -122,7 +139,7 @@ namespace SectionDesigner.ViewModels
                     seria.Points.Add(point2);
                 }
                 seria.Title = part.Name;
-                SectionPlotModel.Series.Add(seria);
+                sectionPlotModel.Series.Add(seria);
 
                 foreach (var _void in part.Voids) {
                     AreaSeries seria1 = new AreaSeries();
@@ -137,11 +154,11 @@ namespace SectionDesigner.ViewModels
                         seria1.Points.Add(point2);
                     }
                     //seria1.Title = _void.Name;
-                    SectionPlotModel.Series.Add(seria1);
+                    sectionPlotModel.Series.Add(seria1);
                 }
             }
 
-            foreach (var reoGroup in section.Reinforcement) {
+            foreach (var reoGroup in Section.Reinforcement) {
 
                 OxyColor randomColor;
                 rand.NextBytes(byteColor);
@@ -157,64 +174,64 @@ namespace SectionDesigner.ViewModels
                     seria.Points.Add(point);
                 }
                 seria.Title = reoGroup.Name;
-                SectionPlotModel.Series.Add(seria);
+                sectionPlotModel.Series.Add(seria);
             }
 
-            DrawCentroid(section);
-        }
-        
-        private void DrawCentroid(TS_section section) {
-
-            Random rand = new Random();
-            byte[] byteColor = new byte[3];
-
-            OxyColor randomColor;
-            rand.NextBytes(byteColor);
-            randomColor = OxyColor.FromArgb(255, byteColor[0], byteColor[1], byteColor[2]);
-
-            ScatterSeries seria = new ScatterSeries();
-            seria.MarkerStroke = randomColor;
-            seria.MarkerType = MarkerType.Plus;
-            seria.MarkerStrokeThickness = 3.5;
-
-            ScatterPoint point = new ScatterPoint(section.Centroid.X, section.Centroid.Y);
-            point.Size = 10;
-            seria.Points.Add(point);
-
-            seria.Title = "Section centroid";
-            SectionPlotModel.Series.Add(seria);
-
-            //FunctionSeries functionSeries1 = new FunctionSeries();
-            // dopracowac jeszcze to
-
-            foreach (var part in section.Parts) {
+            {
+                OxyColor randomColor;
                 rand.NextBytes(byteColor);
                 randomColor = OxyColor.FromArgb(255, byteColor[0], byteColor[1], byteColor[2]);
 
-                ScatterSeries seria1 = new ScatterSeries();
-                seria1.MarkerStroke = randomColor;
-                seria1.MarkerType = MarkerType.Plus;
-                seria1.MarkerStrokeThickness = 2.5;
+                ScatterSeries seria = new ScatterSeries();
+                seria.MarkerStroke = randomColor;
+                seria.MarkerType = MarkerType.Plus;
+                seria.MarkerStrokeThickness = 3.5;
 
-                ScatterPoint point1 = new ScatterPoint(part.Centroid.X, part.Centroid.Y);
-                point1.Size = 7.5;
-                seria1.Points.Add(point1);
+                ScatterPoint point = new ScatterPoint(Section.Centroid.X, Section.Centroid.Y);
+                point.Size = 10;
+                seria.Points.Add(point);
 
-                seria1.Title = part.Name + " - centroid";
-                SectionPlotModel.Series.Add(seria1);
+                seria.Title = "Section centroid";
+                sectionPlotModel.Series.Add(seria);
+
+                //FunctionSeries functionSeries1 = new FunctionSeries();
+                // dopracowac jeszcze to
+
+                foreach (var part in Section.Parts) {
+                    rand.NextBytes(byteColor);
+                    randomColor = OxyColor.FromArgb(255, byteColor[0], byteColor[1], byteColor[2]);
+
+                    ScatterSeries seria1 = new ScatterSeries();
+                    seria1.MarkerStroke = randomColor;
+                    seria1.MarkerType = MarkerType.Plus;
+                    seria1.MarkerStrokeThickness = 2.5;
+
+                    ScatterPoint point1 = new ScatterPoint(part.Centroid.X, part.Centroid.Y);
+                    point1.Size = 7.5;
+                    seria1.Points.Add(point1);
+
+                    seria1.Title = part.Name + " - centroid";
+                    sectionPlotModel.Series.Add(seria1);
+                }
             }
-        }
 
+            SectionPlotModel = sectionPlotModel;
+        }
+        
         #region InotifyPropertyChanged Members
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private void OnPropertyChanged(string propertyName) {
+        private void OnPropertyChanged([CallerMemberName] string propertyName="") {
             PropertyChangedEventHandler handler = PropertyChanged;
 
             if (handler != null) {
                 handler(this, new PropertyChangedEventArgs(propertyName));
             }
+        }
+
+        private void PlotView_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+            DrawSection();
         }
         #endregion
     }

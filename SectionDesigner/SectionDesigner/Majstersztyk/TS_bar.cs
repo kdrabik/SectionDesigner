@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace Majstersztyk
 {
@@ -14,8 +15,15 @@ namespace Majstersztyk
         public TS_point Coordinates {
             get { return _Coordinates; }
             set {
+                if (_Coordinates != null)
+                    _Coordinates.PropertyChanged -= Bar_PropertyChanged;
+
                 _Coordinates = value;
-                OnPropertyChanged("Coordinates");
+
+                if (_Coordinates != null) {
+                    _Coordinates.PropertyChanged += Bar_PropertyChanged;
+                }
+                OnPropertyChanged();
             }
         }
 
@@ -24,7 +32,7 @@ namespace Majstersztyk
         public double Diameter {
             get { return _Diameter; }
             set { _Diameter = value;
-                OnPropertyChanged("Diameter");
+                OnPropertyChanged();
             } }
 
 		public double Area { get { return CalcArea(); }}
@@ -45,12 +53,16 @@ namespace Majstersztyk
         #region InotifyPropertyChanged Members
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private void OnPropertyChanged(string propertyName) {
+        private void OnPropertyChanged([CallerMemberName] string propertyName="") {
             PropertyChangedEventHandler handler = PropertyChanged;
 
             if (handler != null) {
                 handler(this, new PropertyChangedEventArgs(propertyName));
             }
+        }
+        
+        void Bar_PropertyChanged(object sender, PropertyChangedEventArgs args) {
+            OnPropertyChanged();
         }
         #endregion
 

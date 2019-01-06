@@ -198,7 +198,7 @@ namespace Majstersztyk
         protected void Part_OnPropertyChanged(object sender, PropertyChangedEventArgs args) {
             if (_Material != null && _Voids != null && _Contour != null) {
                 CalcProperties();
-                OnPropertyChanged();
+                //OnPropertyChanged();
             }
         }
     }

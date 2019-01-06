@@ -28,14 +28,14 @@ namespace Majstersztyk
             set {
                 if (_Vertices != null) {
                     _Vertices.PropertyChanged -= Contour_OnPropertyChanged;
-                    _Vertices.CollectionChanged -= Contour_OnCollectionChanged;
+                    //_Vertices.CollectionChanged -= Contour_OnCollectionChanged;
                 }
 
                 _Vertices = value;
 
                 if (_Vertices != null) {
                     _Vertices.PropertyChanged += Contour_OnPropertyChanged;
-                    _Vertices.CollectionChanged += Contour_OnCollectionChanged;
+                    //_Vertices.CollectionChanged += Contour_OnCollectionChanged;
                 }
 
                 OnPropertyChanged();
@@ -253,7 +253,7 @@ namespace Majstersztyk
 
         protected void Contour_OnPropertyChanged(object sender, PropertyChangedEventArgs args) {
             CalcProperties();
-            OnPropertyChanged();
+            //OnPropertyChanged();
         }
 
         protected void Contour_OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {

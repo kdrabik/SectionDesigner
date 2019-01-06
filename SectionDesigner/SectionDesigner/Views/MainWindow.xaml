@@ -80,6 +80,11 @@
 			x:Name="Section">
                 <StackPanel Orientation="Vertical">
                     <Label Content="{Binding VM1.Section.Centroid, Mode=OneWay}"/>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Is Section correct?: "/>
+                        <TextBlock Text="{Binding VM1.Section.IsCorrect, Mode=OneWay}"/>
+                    </StackPanel>
+                    
                     <TabControl
 				x:Name="SectionProp" ItemsSource="{Binding VM1.Section.Parts}">
                         <!--SelectedItem="{Binding VM1.Selected_Part}"-->
@@ -145,9 +150,38 @@
                         <DataTemplate>
                             <StackPanel Orientation="Vertical">
                                 <Label Content="{Binding Centroid, Mode=OneWay}"/>
-                                <DataGrid
-                                ItemsSource="{Binding Bars, Mode=TwoWay}" AutoGenerateColumns="False" AutomationProperties.IsColumnHeader="True">
-                                    
+                                <DataGrid ItemsSource="{Binding Bars, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                                          AutoGenerateColumns="False" AutomationProperties.IsColumnHeader="True">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Binding="{Binding Coordinates.X, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
+                                        <DataGridTextColumn Binding="{Binding Coordinates.Y, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
+                                        <DataGridTextColumn Binding="{Binding Diameter, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
+
+                                        <!--
+                                        <DataGridTemplateColumn Header="X" >
+                                            <DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <TextBox Text="{ Binding Coordinates.X, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellTemplate>
+                                        </DataGridTemplateColumn>
+
+                                        <DataGridTemplateColumn Header="Y" >
+                                            <DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <TextBox Text="{ Binding Coordinates.Y, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellTemplate>
+                                        </DataGridTemplateColumn>
+
+                                        <DataGridTemplateColumn Header="Diameter" >
+                                            <DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <TextBox Text="{ Binding Diameter, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellTemplate>
+                                        </DataGridTemplateColumn> -->
+                                    </DataGrid.Columns>
                                 </DataGrid>
                             </StackPanel>
                         </DataTemplate>

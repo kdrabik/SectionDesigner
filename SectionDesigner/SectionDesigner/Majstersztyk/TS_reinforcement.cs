@@ -153,7 +153,7 @@ namespace Majstersztyk
         
         protected void Reinforcement_OnPropertyChanged(object sender, PropertyChangedEventArgs args) {
             CalcProperties();
-            OnPropertyChanged();
+            //OnPropertyChanged();
         }
 
         protected void Reinforcement_OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {

@@ -61,12 +61,41 @@ namespace Majstersztyk
             get { return _Centroid; }
             protected set { _Centroid = value; OnPropertyChanged(); } }
 
-        public virtual double CentrInertiaMom_X { get; protected set; }
-        public virtual double CentrInertiaMom_Y { get; protected set; }
-        public virtual double CentrDeviationMom_XY { get; protected set; }
-        public virtual double CentrPrincipleInertiaMom_1 { get; protected set; }
-        public virtual double CentrPrincipleInertiaMom_2 { get; protected set; }
-        public virtual double AngleOfPrincipleLayout { get; protected set; }
+        private double _CentrInertiaMom_X;
+        public virtual double CentrInertiaMom_X {
+            get { return _CentrInertiaMom_X; }
+            protected set { _CentrInertiaMom_X = value; OnPropertyChanged(); } }
+
+        private double _CentrInertiaMom_Y;
+        public virtual double CentrInertiaMom_Y {
+            get { return _CentrInertiaMom_Y; }
+            protected set { _CentrInertiaMom_Y = value; OnPropertyChanged(); }
+        }
+
+        private double _CentrDeviationMom_XY;
+        public virtual double CentrDeviationMom_XY {
+            get { return _CentrDeviationMom_XY; }
+            protected set { _CentrDeviationMom_XY = value; OnPropertyChanged(); }
+        }
+
+        private double _CentrPrincipleInertiaMom_1;
+        public virtual double CentrPrincipleInertiaMom_1 {
+            get { return _CentrPrincipleInertiaMom_1; }
+            protected set { _CentrPrincipleInertiaMom_1 = value; OnPropertyChanged(); }
+        }
+
+        private double _CentrPrincipleInertiaMom_2;
+        public virtual double CentrPrincipleInertiaMom_2 {
+            get { return _CentrPrincipleInertiaMom_2; }
+            protected set { _CentrPrincipleInertiaMom_2 = value; OnPropertyChanged(); }
+        }
+
+        private double _AngleOfPrincipleLayout;
+        public virtual double AngleOfPrincipleLayout {
+            get { return _AngleOfPrincipleLayout; }
+            protected set { _AngleOfPrincipleLayout = value; OnPropertyChanged(); }
+        }
+        
         public virtual string TypeOf {get{return typeOf;}}
 		protected string typeOf;
 
