@@ -72,15 +72,16 @@ namespace Majstersztyk
             get { return _Point1; }
             set { 
             	if (_Point1 != null)
-            		_Point1.PropertyChanged -= Line_PropertyChanged;
+            		_Point1.ParametersChanged -= OnContainedElementChanged;
             	
             	_Point1 = value;
             	
             	if (_Point1 != null) {
-					_Point1.PropertyChanged += Line_PropertyChanged;
+					_Point1.ParametersChanged += OnContainedElementChanged;
             	}
             	
                 OnPropertyChanged();
+				OnParametersChanged();
             }
         }
         private TS_point _Point2;
@@ -89,15 +90,16 @@ namespace Majstersztyk
             get { return _Point2; }
             set { 
             	if (_Point2 != null)
-            		_Point2.PropertyChanged -= Line_PropertyChanged;
+            		_Point2.ParametersChanged -= OnContainedElementChanged;
             	
             	_Point2 = value;
             	
             	if (_Point2 != null) {
-					_Point2.PropertyChanged += Line_PropertyChanged;
+					_Point2.ParametersChanged += OnContainedElementChanged;
             	}
             	
                 OnPropertyChanged();
+				OnParametersChanged();
             }
         }
 		
@@ -268,9 +270,22 @@ namespace Majstersztyk
         }
         #endregion
 
-		void Line_PropertyChanged(object sender, PropertyChangedEventArgs args)
+        #region InotifyParametersChanged Members
+        public event EventHandler ParametersChanged;
+
+        private void OnParametersChanged() {
+            EventHandler handler = ParametersChanged;
+
+            if (handler != null) {
+                handler(this, new EventArgs());
+            }
+        }
+        #endregion
+        
+		void OnContainedElementChanged(object sender, EventArgs args)
 		{
 			ReCalcMe();
+			OnParametersChanged();
 		}
     }
 }

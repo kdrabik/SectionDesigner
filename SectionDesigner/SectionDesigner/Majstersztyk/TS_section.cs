@@ -17,7 +17,7 @@ namespace Majstersztyk
 	/// <summary>
 	/// Description of TS_section.
 	/// </summary>
-	public class TS_section : TS_region, INotifyPropertyChanged
+	public class TS_section : TS_region
 	{
         private ObservableList<TS_part> _Parts;
 
@@ -25,14 +25,15 @@ namespace Majstersztyk
             get { return _Parts; }
             set {
                 if (_Parts != null)
-                    _Parts.PropertyChanged -= Section_OnPropertyChanged;
+                    _Parts.ParametersChanged -= Section_OnParametersChanged;
 
                 _Parts = value;
 
                 if (_Parts != null) {
-                    _Parts.PropertyChanged += Section_OnPropertyChanged;
+                    _Parts.ParametersChanged += Section_OnParametersChanged;
                 }
                 OnPropertyChanged();
+				OnParametersChanged();
             }
         }
 
@@ -42,14 +43,15 @@ namespace Majstersztyk
             get { return _Reinforcement; }
             set {
                 if (_Reinforcement != null)
-                    _Reinforcement.PropertyChanged -= Section_OnPropertyChanged;
+                    _Reinforcement.ParametersChanged -= Section_OnParametersChanged;
 
                 _Reinforcement = value;
 
                 if (_Reinforcement != null) {
-                    _Reinforcement.PropertyChanged += Section_OnPropertyChanged;
+                    _Reinforcement.ParametersChanged += Section_OnParametersChanged;
                 }
                 OnPropertyChanged();
+				OnParametersChanged();
             }
         }
 
@@ -66,6 +68,7 @@ namespace Majstersztyk
 		{
             Parts.AddRange(parts);
             Reinforcement.AddRange(reinforcement);
+			CalcProperties();
 		}
         
         #region Calculation
@@ -272,10 +275,11 @@ namespace Majstersztyk
 		*/
         #endregion
 
-        protected void Section_OnPropertyChanged(object sender, PropertyChangedEventArgs args) {
+        protected void Section_OnParametersChanged(object sender, EventArgs args) {
             if (_Parts != null && _Reinforcement != null) {
                 CalcProperties();
-                //OnPropertyChanged();
+				OnParametersChanged();
+                OnPropertyChanged("IsCorrect");
             }
         }
     }

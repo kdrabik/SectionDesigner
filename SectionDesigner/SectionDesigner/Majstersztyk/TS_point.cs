@@ -7,15 +7,18 @@
  * To change this template use Tools | Options | Coding | Edit Standard Headers.
  */
 using System;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using SectionDesigner;
+using SectionDesigner.Models;
 
 namespace Majstersztyk
 {
 	/// <summary>
-	/// Description of TS_point.
+	/// Description of TS_point
 	/// </summary>
-	public class TS_point:INotifyPropertyChanged
+	public class TS_point:INotifyParametersChanged
 	{
         private double _X;
 
@@ -23,6 +26,7 @@ namespace Majstersztyk
             get { return _X; }
             set { _X = value;
                 OnPropertyChanged();
+				OnParametersChanged();
             }
         }
 
@@ -32,6 +36,7 @@ namespace Majstersztyk
             get { return _Y; }
             set { _Y = value;
                 OnPropertyChanged();
+				OnParametersChanged();
             }
         }
 		
@@ -94,6 +99,22 @@ namespace Majstersztyk
             }
         }
         #endregion
+
+        #region InotifyParametersChanged Members
+        public event EventHandler ParametersChanged;
+
+        private void OnParametersChanged() {
+            EventHandler handler = ParametersChanged;
+
+            if (handler != null) {
+                handler(this, new EventArgs());
+            }
+        }
+        #endregion
+         
+        public virtual void OnContainedElementChanged(object sender, EventArgs args) {
+			OnParametersChanged();
+        }
         
         #region Equals and GetHashCode implementation 
   /*      public override bool Equals(object obj)

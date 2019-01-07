@@ -24,11 +24,11 @@ namespace SectionDesigner.ViewModels
             get { return _Section; }
             set {
                 if (_Section != null) {
-                    _Section.PropertyChanged -= PlotView_PropertyChanged;
+                    _Section.ParametersChanged -= PlotView_PropertyChanged;
                 }
                 _Section = value;
                 if (_Section != null) {
-                    _Section.PropertyChanged += PlotView_PropertyChanged;
+                    _Section.ParametersChanged += PlotView_PropertyChanged;
                 }
                 DrawSection();
                 OnPropertyChanged();
@@ -115,7 +115,7 @@ namespace SectionDesigner.ViewModels
 
         private void DrawSection() {
             PlotModel sectionPlotModel = new PlotModel();
-
+            bool czydobry = Section.Parts[0].IsCorrect;
             SectionPlotModel = new PlotModel();
             SetUpGraph(sectionPlotModel);
 
@@ -230,7 +230,7 @@ namespace SectionDesigner.ViewModels
             }
         }
 
-        private void PlotView_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+        private void PlotView_PropertyChanged(object sender, EventArgs e) {
             DrawSection();
         }
         #endregion

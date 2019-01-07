@@ -5,10 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using SectionDesigner;
 
 namespace Majstersztyk
 {
-    public class TS_bar:INotifyPropertyChanged
+	public class TS_bar:INotifyParametersChanged
     {
         private TS_point _Coordinates;
 
@@ -16,14 +17,15 @@ namespace Majstersztyk
             get { return _Coordinates; }
             set {
                 if (_Coordinates != null)
-                    _Coordinates.PropertyChanged -= Bar_PropertyChanged;
+                    _Coordinates.ParametersChanged -= OnContainedElementChanged;
 
                 _Coordinates = value;
 
                 if (_Coordinates != null) {
-                    _Coordinates.PropertyChanged += Bar_PropertyChanged;
+                    _Coordinates.ParametersChanged += OnContainedElementChanged;
                 }
                 OnPropertyChanged();
+				OnParametersChanged();
             }
         }
 
@@ -33,6 +35,7 @@ namespace Majstersztyk
             get { return _Diameter; }
             set { _Diameter = value;
                 OnPropertyChanged();
+				OnParametersChanged();
             } }
 
 		public double Area { get { return CalcArea(); }}
@@ -60,11 +63,25 @@ namespace Majstersztyk
                 handler(this, new PropertyChangedEventArgs(propertyName));
             }
         }
+        #endregion
         
-        void Bar_PropertyChanged(object sender, PropertyChangedEventArgs args) {
-            OnPropertyChanged();
+        #region InotifyParametersChanged Members
+        public event EventHandler ParametersChanged;
+
+        private void OnParametersChanged() {
+            EventHandler handler = ParametersChanged;
+
+            if (handler != null) {
+                handler(this, new EventArgs());
+            }
         }
         #endregion
+        
+        public void OnContainedElementChanged(object sender, EventArgs e){
+			OnPropertyChanged("Diameter");
+			OnParametersChanged();
+        }
+        
 
     }
 }

@@ -19,7 +19,7 @@ namespace Majstersztyk
     /// </summary>s
     /// 
 
-    public class TS_part : TS_region, INotifyPropertyChanged
+    public class TS_part : TS_region
     {
         private ObservableList<TS_void> _Voids;
 
@@ -27,14 +27,15 @@ namespace Majstersztyk
             get { return _Voids; }
             set {
                 if (_Voids != null)
-                    _Voids.PropertyChanged -= Part_OnPropertyChanged;
+                    _Voids.ParametersChanged -= Part_OnParametersChanged;
 
                 _Voids = value;
 
                 if (_Voids != null) {
-                    _Voids.PropertyChanged += Part_OnPropertyChanged;
+                    _Voids.ParametersChanged += Part_OnParametersChanged;
                 }
                 OnPropertyChanged();
+				OnParametersChanged();
             }
         }
 
@@ -44,14 +45,15 @@ namespace Majstersztyk
             get { return _Contour; }
             set {
                 if (_Contour != null)
-                    _Contour.PropertyChanged -= Part_OnPropertyChanged;
+                    _Contour.ParametersChanged -= Part_OnParametersChanged;
 
                 _Contour = value;
 
                 if (_Contour != null) {
-                    _Contour.PropertyChanged += Part_OnPropertyChanged;
+                    _Contour.ParametersChanged += Part_OnParametersChanged;
                 }
                 OnPropertyChanged();
+				OnParametersChanged();
             }
         }
 
@@ -61,14 +63,15 @@ namespace Majstersztyk
             get { return _Material; }
             set {
                 if (_Material != null)
-                    _Material.PropertyChanged -= Part_OnPropertyChanged;
+                    _Material.ParametersChanged -= Part_OnParametersChanged;
 
                 _Material = value;
 
                 if (_Material != null) {
-                    _Material.PropertyChanged += Part_OnPropertyChanged;
+                    _Material.ParametersChanged += Part_OnParametersChanged;
                 }
-                OnPropertyChanged();
+				OnPropertyChanged();
+				OnParametersChanged();
             }
         }
 
@@ -95,6 +98,7 @@ namespace Majstersztyk
             Contour = contour;
             Voids.AddRange(voids);
             GeometryComponents = null;
+			CalcProperties();
         }
 
         #region Calculation
@@ -195,10 +199,10 @@ namespace Majstersztyk
 		}
         #endregion
 
-        protected void Part_OnPropertyChanged(object sender, PropertyChangedEventArgs args) {
+        protected void Part_OnParametersChanged(object sender, EventArgs args) {
             if (_Material != null && _Voids != null && _Contour != null) {
                 CalcProperties();
-                //OnPropertyChanged();
+				OnParametersChanged();
             }
         }
     }

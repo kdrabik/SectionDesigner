@@ -25,8 +25,13 @@ namespace SectionDesigner
     public interface IObservableList<T> : IList<T>, INotifyCollectionChanged {
 
     }
+    
+    public interface INotifyParametersChanged : INotifyPropertyChanged{
+    	event EventHandler ParametersChanged;
+		void OnContainedElementChanged(object sender, EventArgs e);
+    }
 
-    public class ObservableList<T> : List<T>, IObservableList<T>, INotifyPropertyChanged where T : INotifyPropertyChanged
+    public class ObservableList<T> : List<T>, IObservableList<T>, INotifyPropertyChanged where T : INotifyParametersChanged
     {
 
         #region Constructors
@@ -44,8 +49,8 @@ namespace SectionDesigner
             );
         }
 
-        public ObservableList(List<T> list) : this() {
-            this.AddRange(list);
+        public ObservableList(IEnumerable<T> collection) : this() {
+            this.AddRange(collection);
         }
 
         #endregion
@@ -60,62 +65,73 @@ namespace SectionDesigner
 
         public new void Add(T item) {
             base.Add(item);
+            item.ParametersChanged += OnContainedElementChanged;
             item.PropertyChanged += ContainedElementChanged;
-            NotifyCollectionChangedEventArgs e =
+            /*NotifyCollectionChangedEventArgs e =
                 new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, item);
 
-            OnCollectionChanged(e);
+            OnCollectionChanged(e);*/
         }
 
         public new void AddRange(IEnumerable<T> collection) {
             base.AddRange(collection);
-            foreach (var item in collection)
-                item.PropertyChanged += ContainedElementChanged;
-            NotifyCollectionChangedEventArgs e =
+			foreach (var item in collection) {
+				item.ParametersChanged += OnContainedElementChanged;
+				item.PropertyChanged += ContainedElementChanged;
+			}
+            /*NotifyCollectionChangedEventArgs e =
                 new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, new List<T>(collection));
 
-            OnCollectionChanged(e);
+            OnCollectionChanged(e);*/
         }
 
         public new void Clear() {
-            foreach (var item in this)
-                item.PropertyChanged -= ContainedElementChanged;
+			foreach (var item in this) {
+				item.ParametersChanged -= OnContainedElementChanged;
+            	item.PropertyChanged -= ContainedElementChanged;
+			}
             base.Clear();
-            NotifyCollectionChangedEventArgs e =
+            /*NotifyCollectionChangedEventArgs e =
                 new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset);
 
-            OnCollectionChanged(e);
+            OnCollectionChanged(e);*/
         }
 
         public new void Insert(int i, T item) {
             base.Insert(i, item);
+            item.ParametersChanged += OnContainedElementChanged;
             item.PropertyChanged += ContainedElementChanged;
-            NotifyCollectionChangedEventArgs e =
+            /*NotifyCollectionChangedEventArgs e =
                 new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, item);
-            OnCollectionChanged(e);
+            OnCollectionChanged(e);*/
         }
 
         public new void InsertRange(int i, IEnumerable<T> collection) {
             base.InsertRange(i, collection);
-            foreach (var item in collection)
-                item.PropertyChanged += ContainedElementChanged;
-            NotifyCollectionChangedEventArgs e =
+			foreach (var item in collection) {
+				item.ParametersChanged += OnContainedElementChanged;
+            item.PropertyChanged += ContainedElementChanged;
+			}
+            /*NotifyCollectionChangedEventArgs e =
                 new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, collection);
-            OnCollectionChanged(e);
+            OnCollectionChanged(e);*/
         }
 
         public new void Remove(T item) {
             base.Remove(item);
+            item.ParametersChanged -= OnContainedElementChanged;
             item.PropertyChanged -= ContainedElementChanged;
-            NotifyCollectionChangedEventArgs e =
+            /*NotifyCollectionChangedEventArgs e =
                 new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, item);
-            OnCollectionChanged(e);
+            OnCollectionChanged(e);*/
         }
 
         public new void RemoveAll(Predicate<T> match) {
             List<T> backup = FindAll(match);
-            foreach (var item in backup)
-                item.PropertyChanged -= ContainedElementChanged;
+			foreach (var item in backup) {
+				item.ParametersChanged -= OnContainedElementChanged;
+				item.PropertyChanged -= ContainedElementChanged;
+			}
             base.RemoveAll(match);
             NotifyCollectionChangedEventArgs e =
                 new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, backup);
@@ -124,31 +140,35 @@ namespace SectionDesigner
 
         public new void RemoveAt(int i) {
             T backup = this[i];
+            backup.ParametersChanged -= OnContainedElementChanged;
             backup.PropertyChanged -= ContainedElementChanged;
             base.RemoveAt(i);
-            NotifyCollectionChangedEventArgs e =
+            /*NotifyCollectionChangedEventArgs e =
                 new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, backup);
-            OnCollectionChanged(e);
+            OnCollectionChanged(e);*/
         }
 
         public new void RemoveRange(int index, int count) {
             List<T> backup = GetRange(index, count);
-            foreach (var item in backup)
-                item.PropertyChanged -= ContainedElementChanged;
+			foreach (var item in backup) {
+				item.ParametersChanged -= OnContainedElementChanged;
+				item.PropertyChanged -= ContainedElementChanged;
+			}
             base.RemoveRange(index, count);
-            NotifyCollectionChangedEventArgs e =
+            /*NotifyCollectionChangedEventArgs e =
                 new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, backup);
-            OnCollectionChanged(e);
+            OnCollectionChanged(e);*/
         }
 
         public new T this[int index] {
             get { return base[index]; }
             set {
                 T oldValue = base[index];
-                oldValue.PropertyChanged += ContainedElementChanged;
-                NotifyCollectionChangedEventArgs e =
+                oldValue.ParametersChanged += OnContainedElementChanged;
+				oldValue.PropertyChanged += ContainedElementChanged;
+                /*NotifyCollectionChangedEventArgs e =
                     new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Replace, value, oldValue);
-                OnCollectionChanged(e);
+                OnCollectionChanged(e);*/
             }
         }
 
@@ -161,14 +181,14 @@ namespace SectionDesigner
         protected void OnCollectionChanged(NotifyCollectionChangedEventArgs e) {
             Unsubscribe(e.OldItems);
             Subscribe(e.NewItems);
-            if (IsNotifying && CollectionChanged != null)
+            /*if (IsNotifying && CollectionChanged != null)
                 try {
                     CollectionChanged(this, e);
                 } catch (System.NotSupportedException) {
                     NotifyCollectionChangedEventArgs alternativeEventArgs =
                         new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset);
                     OnCollectionChanged(alternativeEventArgs);
-                }
+                }*/
         }
 
         #endregion
@@ -184,8 +204,21 @@ namespace SectionDesigner
             }
         }
 
+        public event EventHandler ParametersChanged;
+
+        protected void OnParametersChanged() {
+
+            if (ParametersChanged != null) {
+                ParametersChanged(this, new EventArgs());
+            }
+        }
+        
         private void ContainedElementChanged(object sender, PropertyChangedEventArgs e) {
             OnPropertyChanged(e.PropertyName);
+        }
+        
+        private void OnContainedElementChanged(object sender, EventArgs e) {
+            OnParametersChanged();
         }
 
         //public delegate void ItemPropertyChanged(object sender, PropertyChangedEventArgs e);
@@ -196,15 +229,19 @@ namespace SectionDesigner
 
         private void Subscribe(IList iList) {
             if (iList != null) {
-                foreach (T element in iList)
-                    element.PropertyChanged += ContainedElementChanged;
+				foreach (T element in iList) {
+					element.ParametersChanged += OnContainedElementChanged;
+					element.PropertyChanged += ContainedElementChanged;
+				}
             }
         }
 
         private void Unsubscribe(IList iList) {
             if (iList != null) {
-                foreach (T element in iList)
-                    element.PropertyChanged -= ContainedElementChanged;
+				foreach (T element in iList) {
+					element.ParametersChanged -= OnContainedElementChanged;
+					element.PropertyChanged += ContainedElementChanged;
+				}
             }
         }
         #endregion

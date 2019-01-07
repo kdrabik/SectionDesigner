@@ -17,18 +17,19 @@ namespace Majstersztyk
             get { return _Bars; }
             set {
                 if (_Bars != null) {
-                    _Bars.PropertyChanged -= Reinforcement_OnPropertyChanged;
-                    _Bars.CollectionChanged -= Reinforcement_OnCollectionChanged;
+                    _Bars.ParametersChanged -= Reinforcement_OnParametersChanged;
+                   // _Bars.CollectionChanged -= Reinforcement_OnCollectionChanged;
                 }
 
                 _Bars = value;
 
                 if (_Bars != null) {
-                    _Bars.PropertyChanged += Reinforcement_OnPropertyChanged;
-                    _Bars.CollectionChanged += Reinforcement_OnCollectionChanged;
+                    _Bars.ParametersChanged += Reinforcement_OnParametersChanged;
+                    //_Bars.CollectionChanged += Reinforcement_OnCollectionChanged;
                 }
 
                 OnPropertyChanged();
+				OnParametersChanged();
             }
         }
 
@@ -38,12 +39,12 @@ namespace Majstersztyk
             get { return _Material; }
             set {
                 if (_Material != null)
-                    _Material.PropertyChanged -= Reinforcement_OnPropertyChanged;
+                    _Material.ParametersChanged -= Reinforcement_OnParametersChanged;
 
                 _Material = value;
 
                 if (_Material != null) {
-                    _Material.PropertyChanged += Reinforcement_OnPropertyChanged;
+                    _Material.ParametersChanged += Reinforcement_OnParametersChanged;
                 }
                 OnPropertyChanged();
             }
@@ -56,12 +57,13 @@ namespace Majstersztyk
             Bars = new ObservableList<TS_bar>();
             Material = null;
             Name = "Reinforcement";
-            CalcProperties();
+            //CalcProperties();
         }
 
         public TS_reinforcement(List<TS_bar> bars, TS_materials.TS_material material):this() {
             Material = material;
             Bars.AddRange(bars);
+            CalcProperties();
         }
 
         #region Calculation Methods
@@ -151,14 +153,9 @@ namespace Majstersztyk
 			return text;
 		}
         
-        protected void Reinforcement_OnPropertyChanged(object sender, PropertyChangedEventArgs args) {
+        protected void Reinforcement_OnParametersChanged(object sender, EventArgs args) {
             CalcProperties();
-            //OnPropertyChanged();
-        }
-
-        protected void Reinforcement_OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
-            //CalcProperties();
-            //();
+			OnParametersChanged();
         }
 
     }

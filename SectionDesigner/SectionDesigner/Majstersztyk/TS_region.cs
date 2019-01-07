@@ -7,13 +7,15 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Collections.Specialized;
 using System.Collections.ObjectModel;
+using SectionDesigner;
 
 namespace Majstersztyk
 {
-    public abstract class TS_region : INotifyPropertyChanged
+	public abstract class TS_region : INotifyParametersChanged
     {
         #region Properties
-        public bool IsCorrect { get { return IsObjectCorrect(); } }
+        public bool IsCorrect { 
+        	get { return IsObjectCorrect(); } }
 
         private string _Name;
 
@@ -187,7 +189,7 @@ namespace Majstersztyk
         #region InotifyPropertyChanged Members
 	
 		public event PropertyChangedEventHandler PropertyChanged;
-	
+			
 		protected void OnPropertyChanged([CallerMemberName] string propertyName="") {
 			PropertyChangedEventHandler handler = PropertyChanged;
 			
@@ -195,15 +197,23 @@ namespace Majstersztyk
                 handler(this, new PropertyChangedEventArgs(propertyName));
 			}
 		}
+		#endregion
 
+        #region InotifyParametersChanged Members
+        public event EventHandler ParametersChanged;
+
+        protected void OnParametersChanged() {
+            EventHandler handler = ParametersChanged;
+
+            if (handler != null) {
+                handler(this, new EventArgs());
+            }
+        }
         #endregion
         
-        protected virtual void Region_OnPropertyChanged(object sender, PropertyChangedEventArgs args) {
+        public virtual void OnContainedElementChanged(object sender, EventArgs args) {
             CalcProperties();
-        }
-        
-        protected virtual void Region_OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
-            CalcProperties();
+			OnParametersChanged();
         }
     }
 }

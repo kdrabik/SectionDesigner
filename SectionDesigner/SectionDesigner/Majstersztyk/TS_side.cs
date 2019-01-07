@@ -9,13 +9,14 @@
 using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using SectionDesigner;
 
 namespace Majstersztyk
 {
 	/// <summary>
 	/// Description of TS_side.
 	/// </summary>
-	public class TS_side:INotifyPropertyChanged
+	public class TS_side : INotifyParametersChanged
 	{
 		public TS_line Line {get; private set;}
 
@@ -23,17 +24,18 @@ namespace Majstersztyk
 
         public TS_point StartPoint {
             get { return _StartPoint; }
-            set {/*
+            set {
                 if (_StartPoint != null)
-                    _StartPoint.PropertyChanged -= Side_PropertyChanged;
-                    */
+                    _StartPoint.ParametersChanged -= OnContainedElementChanged;
+                    
                 _StartPoint = value;
-                /*
+                
                 if (_StartPoint != null) {
-                    _StartPoint.PropertyChanged += Side_PropertyChanged;
-                }*/
+                    _StartPoint.ParametersChanged += OnContainedElementChanged;
+                }
 
                 OnPropertyChanged();
+				OnParametersChanged();
             }
         }
 
@@ -41,17 +43,18 @@ namespace Majstersztyk
 
         public TS_point EndPoint {
             get { return _EndPoint; }
-            set {/*
+            set {
                 if (_EndPoint != null)
-                    _EndPoint.PropertyChanged -= Side_PropertyChanged;
-                    */
+                    _EndPoint.ParametersChanged -= OnContainedElementChanged;
+                    
                 _EndPoint = value;
-                /*
+                
                 if (_EndPoint != null) {
-                    _EndPoint.PropertyChanged += Side_PropertyChanged;
+                    _EndPoint.ParametersChanged += OnContainedElementChanged;
                 }
-                */
+                
                 OnPropertyChanged();
+				OnParametersChanged();
             }
         }
         		
@@ -60,12 +63,12 @@ namespace Majstersztyk
 			this.StartPoint = StartPoint;
 			this.EndPoint = EndPoint;
             Line = new TS_line(StartPoint, EndPoint);
-            ReCalcMe();
+            //ReCalcMe();
 		}		
-		
+		/*
         private void ReCalcMe() {
             Line.ReCalcMe();
-        }
+        }*/
 
 		public double Length()
 		{
@@ -149,8 +152,20 @@ namespace Majstersztyk
         }
         #endregion
 
-        void Side_PropertyChanged(object sender, PropertyChangedEventArgs args) {
-            //ReCalcMe();
+        #region InotifyParametersChanged Members
+        public event EventHandler ParametersChanged;
+
+        private void OnParametersChanged() {
+            EventHandler handler = ParametersChanged;
+
+            if (handler != null) {
+                handler(this, new EventArgs());
+            }
+        }
+        #endregion
+        
+        public void OnContainedElementChanged(object sender, EventArgs args) {
+			OnParametersChanged();
         }
     }
 }

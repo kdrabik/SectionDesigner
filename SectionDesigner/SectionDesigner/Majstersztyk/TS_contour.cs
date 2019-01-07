@@ -19,7 +19,7 @@ namespace Majstersztyk
 	/// <summary>
 	/// Description of TS_contour.
 	/// </summary>
-	public class TS_contour : TS_region, INotifyPropertyChanged
+	public class TS_contour : TS_region
     {
         private ObservableList<TS_point> _Vertices;
 
@@ -27,18 +27,19 @@ namespace Majstersztyk
             get { return _Vertices; }
             set {
                 if (_Vertices != null) {
-                    _Vertices.PropertyChanged -= Contour_OnPropertyChanged;
+                    _Vertices.ParametersChanged -= Contour_OnParametersChanged;
                     //_Vertices.CollectionChanged -= Contour_OnCollectionChanged;
                 }
 
                 _Vertices = value;
 
                 if (_Vertices != null) {
-                    _Vertices.PropertyChanged += Contour_OnPropertyChanged;
+                    _Vertices.ParametersChanged += Contour_OnParametersChanged;
                     //_Vertices.CollectionChanged += Contour_OnCollectionChanged;
                 }
 
                 OnPropertyChanged();
+				OnParametersChanged();
             }
         }
 
@@ -55,14 +56,12 @@ namespace Majstersztyk
         public TS_contour(List<TS_point> vertices) : this() {
             Vertices.AddRange(vertices);
 
-            if (CalcArea() < 0) {
-                Vertices.Reverse();
-            }
-
+			CalcProperties();
             //Sides.AddRange(GenerateSides(Vertices));
         }
 
         #region Calculations
+        
         protected override double CalcArea() {
             double A = 0;
             for (int i = 0; i < _Vertices.Count; i++)
@@ -70,6 +69,18 @@ namespace Majstersztyk
                 int j = IndexOfNextVertex(i);
                 A += ((_Vertices[j].X - _Vertices[i].X) * (_Vertices[j].Y + _Vertices[i].Y));
             }
+            
+            if (A < 0) {
+				_Vertices.Reverse();
+            }
+            
+            A = 0;
+            for (int i = 0; i < _Vertices.Count; i++)
+            {
+                int j = IndexOfNextVertex(i);
+                A += ((_Vertices[j].X - _Vertices[i].X) * (_Vertices[j].Y + _Vertices[i].Y));
+            }
+            
             return 1d / 2 * A;
         }
 
@@ -251,14 +262,9 @@ namespace Majstersztyk
 			return Environment.NewLine + base.ToString();
 		}
 
-        protected void Contour_OnPropertyChanged(object sender, PropertyChangedEventArgs args) {
+        protected void Contour_OnParametersChanged(object sender, EventArgs args) {
             CalcProperties();
-            //OnPropertyChanged();
-        }
-
-        protected void Contour_OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
-            //CalcProperties();
-            //();
+			OnParametersChanged();
         }
     }
 }

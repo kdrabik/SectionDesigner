@@ -9,13 +9,14 @@
 using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using SectionDesigner;
 
 namespace Majstersztyk.TS_materials
 {
 	/// <summary>
 	/// Description of TS_material.
 	/// </summary>
-	public abstract class TS_material:INotifyPropertyChanged
+	public abstract class TS_material : INotifyParametersChanged
     {
         private double _E;
 
@@ -24,6 +25,7 @@ namespace Majstersztyk.TS_materials
             set {
                 _E = value;
                 OnPropertyChanged();
+				OnParametersChanged();
             } }
 
 		public string Name;
@@ -44,7 +46,22 @@ namespace Majstersztyk.TS_materials
             }
         }
         #endregion
+        
+        #region InotifyParametersChanged Members
+        public event EventHandler ParametersChanged;
 
+        private void OnParametersChanged() {
+            EventHandler handler = ParametersChanged;
+
+            if (handler != null) {
+                handler(this, new EventArgs());
+            }
+        }
+        #endregion
+        
+        public void OnContainedElementChanged(object sender, EventArgs e){
+        	
+        }
     }
 
 
