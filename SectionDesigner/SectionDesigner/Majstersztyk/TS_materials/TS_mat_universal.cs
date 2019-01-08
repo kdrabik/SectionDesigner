@@ -20,5 +20,10 @@ namespace Majstersztyk.TS_materials
 			this.E = E;
 			this.Name = Name;
 		}
+		
+		public TS_mat_universal(){
+			this.E = 1;
+			this.Name = "Material unit";
+		}
 	}
 }

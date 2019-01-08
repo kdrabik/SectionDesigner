@@ -10,14 +10,14 @@ namespace SectionDesigner.ViewModels
 {
     public class OxyPlotViewModel : INotifyPropertyChanged
     {
+    	public OxyPlotViewModel(){    	}
+    	
         private PlotModel _SectionPlotModel;
         public PlotModel SectionPlotModel {
             get { return _SectionPlotModel; }
             set {
                 _SectionPlotModel = value;
-                OnPropertyChanged();
-            }
-        }
+                OnPropertyChanged(); } }
 
         private TS_section _Section;
         public TS_section Section {
@@ -25,18 +25,60 @@ namespace SectionDesigner.ViewModels
             set {
                 if (_Section != null) {
                     _Section.ParametersChanged -= PlotView_PropertyChanged;
+                    _Section.SelectedMemberChanged -= SelectedContour_PropertyChanged;
+
+                    foreach (var Part in _Section.Parts)
+                        Part.SelectedMemberChanged -= SelectedContour_PropertyChanged;
+
+                    foreach (var Reo in _Section.Reinforcement)
+                        Reo.SelectedMemberChanged -= SelectedContour_PropertyChanged;
                 }
+
                 _Section = value;
+
                 if (_Section != null) {
                     _Section.ParametersChanged += PlotView_PropertyChanged;
+                    _Section.SelectedMemberChanged += SelectedContour_PropertyChanged;
+
+                    foreach (var Part in _Section.Parts) {
+                        Part.SelectedMemberChanged += SelectedContour_PropertyChanged;
+
+                        foreach (var Reo in _Section.Reinforcement)
+                            Reo.SelectedMemberChanged += SelectedContour_PropertyChanged;
+                    }
+
+                    DrawSection();
+                    OnPropertyChanged();
                 }
-                DrawSection();
-                OnPropertyChanged();
             }
         }
-
+        
+		private Series _currentSeries;
+        
+        private TS_region _SelectedContour;
+        public TS_region SelectedContour{
+        	get{ return _SelectedContour;}
+        	set{
+        		if (_currentSeries != null)
+					SectionPlotModel.Series.Remove(_currentSeries);
+        		
+                _SelectedContour = value;
+        		
+        		//DrawSelectedMember(_SelectedContour);
+        		OnPropertyChanged();
+        		OnPropertyChanged("SectionPlotModel"); } }
+        
+		private List<OxyColor> Kolory_Parts = new List<OxyColor>() { 
+			OxyColors.Green, OxyColors.Blue, OxyColors.Red, OxyColors.Yellow, OxyColors.Purple, OxyColors.Aqua};
+		
+        private List<OxyColor> Kolory_Reinforcement = new List<OxyColor>() {
+        	OxyColors.Gray, OxyColors.DarkSlateGray, OxyColors.DarkGray, OxyColors.SlateGray, OxyColors.DimGray, OxyColors.LightSlateGray };
+		
+		private List<OxyColor> Kolory_Centroids = new List<OxyColor>() {
+			OxyColors.DarkGreen, OxyColors.DarkBlue, OxyColors.DarkRed, OxyColors.DarkOrange, OxyColors.DarkMagenta, OxyColors.DarkSeaGreen};
+        
         double generalThickness = 2.0;
-
+        
         private void SetUpGraph(PlotModel sectionPlotModel) {
             sectionPlotModel.PlotType = PlotType.XY;
             sectionPlotModel.Axes.Clear();
@@ -44,20 +86,6 @@ namespace SectionDesigner.ViewModels
             sectionPlotModel.Axes.Add(new OxyPlot.Axes.LinearAxis());
             sectionPlotModel.Axes[0].Position = OxyPlot.Axes.AxisPosition.Left;
             sectionPlotModel.Axes[1].Position = OxyPlot.Axes.AxisPosition.Bottom;
-            /*SectionPlotModel.Axes[0].PositionAtZeroCrossing = true;
-            SectionPlotModel.Axes[1].PositionAtZeroCrossing = true;
-            SectionPlotModel.Axes[0].AxislineStyle = LineStyle.Solid;
-            SectionPlotModel.Axes[1].AxislineStyle = LineStyle.Solid;
-            //SectionPlotModel.Axes[0].TickStyle = OxyPlot.Axes.TickStyle.Inside;
-            //SectionPlotModel.Axes[1].TickStyle = OxyPlot.Axes.TickStyle.Outside;
-            SectionPlotModel.Axes[0].MajorGridlineStyle = LineStyle.Dot;
-            SectionPlotModel.Axes[1].MajorGridlineStyle = LineStyle.Dot;
-            SectionPlotModel.Axes[0].MajorGridlineThickness = 1;
-            SectionPlotModel.Axes[1].MajorGridlineThickness = 1;
-            SectionPlotModel.Axes[0].MinorGridlineStyle = LineStyle.Dot;
-            SectionPlotModel.Axes[1].MinorGridlineStyle = LineStyle.Dot;
-            SectionPlotModel.Axes[0].MinorGridlineThickness = 0.75;
-            SectionPlotModel.Axes[1].MinorGridlineThickness = 0.75;*/
 
             foreach (var axis in sectionPlotModel.Axes) {
                 axis.Layer = OxyPlot.Axes.AxisLayer.AboveSeries;
@@ -79,143 +107,153 @@ namespace SectionDesigner.ViewModels
             sectionPlotModel.LegendPlacement = LegendPlacement.Outside;
 
             sectionPlotModel.LegendSymbolLength = 40;
-            
         }
-
-        public OxyPlotViewModel() {}
-
-        /*public void AddPart(TS_part part) {
-            OxyPlot.Series.LineSeries seria = new OxyPlot.Series.LineSeries();
-            seria.Color = OxyColors.Blue;
-            seria.StrokeThickness = 2.0;
-            
-            foreach (var side in part.Contour.Sides) {
-                DataPoint point1 = new DataPoint(side.StartPoint.X, side.StartPoint.Y);
-                seria.Points.Add(point1);
-                DataPoint point2 = new DataPoint(side.EndPoint.X, side.EndPoint.Y);
-                seria.Points.Add(point2);
-            }
-            SectionPlotModel.Series.Add(seria);
-            
-            foreach (var _void in part.Voids) {
-                OxyPlot.Series.LineSeries seria1 = new OxyPlot.Series.LineSeries();
-                seria1.Color = OxyColors.Blue;
-                seria1.StrokeThickness = 2.0;
-
-                foreach (var side in _void.Sides) {
-                    DataPoint point1 = new DataPoint(side.StartPoint.X, side.StartPoint.Y);
-                    seria1.Points.Add(point1);
-                    DataPoint point2 = new DataPoint(side.EndPoint.X, side.EndPoint.Y);
-                    seria1.Points.Add(point2);
-                }
-                SectionPlotModel.Series.Add(seria1);
-            }
-        }
-        */
 
         private void DrawSection() {
-            PlotModel sectionPlotModel = new PlotModel();
-            bool czydobry = Section.Parts[0].IsCorrect;
-            SectionPlotModel = new PlotModel();
-            SetUpGraph(sectionPlotModel);
+			PlotModel sectionPlotModel = new PlotModel();
+			SetUpGraph(sectionPlotModel);
+			
+			// RYSOWANIE KOLEJNYCH PARTÓW
+			foreach (var part in Section.Parts) {
 
-            Random rand = new Random();
-            byte[] byteColor = new byte[3];
+				AreaSeries seria_part = new AreaSeries();
+				seria_part.Color = Kolory_Parts[Section.Parts.IndexOf(part)];
+				seria_part.StrokeThickness = generalThickness;
 
-            foreach (var part in Section.Parts) {
+				// KONTUR PARTU
+				foreach (var side in part.Contour.Sides) {
+					DataPoint point1 = new DataPoint(side.StartPoint.X, side.StartPoint.Y);
+					seria_part.Points.Add(point1);
+					DataPoint point2 = new DataPoint(side.EndPoint.X, side.EndPoint.Y);
+					seria_part.Points.Add(point2);
+				}
+				seria_part.Title = part.Name;
+				sectionPlotModel.Series.Add(seria_part);
 
-                OxyColor randomColor;
-                rand.NextBytes(byteColor);
-                randomColor = OxyColor.FromArgb(255, byteColor[0], byteColor[1], byteColor[2]);
+				// VOIDY W PARCIE
+				foreach (var _void in part.Voids) {
+					AreaSeries seria_void = new AreaSeries();
+					seria_void.Color = Kolory_Parts[Section.Parts.IndexOf(part)];
+					seria_void.Fill = OxyColors.White;
+					seria_void.StrokeThickness = generalThickness;
 
-                AreaSeries seria = new AreaSeries();
-                seria.Color = randomColor;
-                seria.StrokeThickness = generalThickness;
+					foreach (var side in _void.Sides) {
+						DataPoint point1 = new DataPoint(side.StartPoint.X, side.StartPoint.Y);
+						seria_void.Points.Add(point1);
+						DataPoint point2 = new DataPoint(side.EndPoint.X, side.EndPoint.Y);
+						seria_void.Points.Add(point2);
+					}
+					sectionPlotModel.Series.Add(seria_void);
+				}
+			}
 
-                foreach (var side in part.Contour.Sides) {
-                    DataPoint point1 = new DataPoint(side.StartPoint.X, side.StartPoint.Y);
-                    seria.Points.Add(point1);
-                    DataPoint point2 = new DataPoint(side.EndPoint.X, side.EndPoint.Y);
-                    seria.Points.Add(point2);
-                }
-                seria.Title = part.Name;
-                sectionPlotModel.Series.Add(seria);
-
-                foreach (var _void in part.Voids) {
-                    AreaSeries seria1 = new AreaSeries();
-                    seria1.Color = randomColor;
-                    seria1.Fill = OxyColors.White;
-                    seria1.StrokeThickness = generalThickness;
-
-                    foreach (var side in _void.Sides) {
-                        DataPoint point1 = new DataPoint(side.StartPoint.X, side.StartPoint.Y);
-                        seria1.Points.Add(point1);
-                        DataPoint point2 = new DataPoint(side.EndPoint.X, side.EndPoint.Y);
-                        seria1.Points.Add(point2);
-                    }
-                    //seria1.Title = _void.Name;
-                    sectionPlotModel.Series.Add(seria1);
-                }
-            }
-
-            foreach (var reoGroup in Section.Reinforcement) {
-
-                OxyColor randomColor;
-                rand.NextBytes(byteColor);
-                randomColor = OxyColor.FromArgb(255, byteColor[0], byteColor[1], byteColor[2]);
-
-                ScatterSeries seria = new ScatterSeries();
-                seria.MarkerFill = randomColor;
-                seria.MarkerType = MarkerType.Circle;
+			// RYSOWANIE KOLEJNYCH GRUP ZBROJENIA
+			foreach (var reoGroup in Section.Reinforcement) {
+				ScatterSeries seria_reo = new ScatterSeries();
+				seria_reo.MarkerFill = Kolory_Reinforcement[Section.Reinforcement.IndexOf(reoGroup)];
+				seria_reo.MarkerType = MarkerType.Circle;
                 
-                foreach (var bar in reoGroup.Bars) {
-                    ScatterPoint point = new ScatterPoint(bar.Coordinates.X, bar.Coordinates.Y);
-                    point.Size = bar.Diameter*100;
-                    seria.Points.Add(point);
+				foreach (var bar in reoGroup.Bars) {
+					ScatterPoint point = new ScatterPoint(bar.Coordinates.X, bar.Coordinates.Y);
+					point.Size = bar.Diameter * 100;
+					seria_reo.Points.Add(point);
+				}
+				seria_reo.Title = reoGroup.Name;
+				sectionPlotModel.Series.Add(seria_reo);
+			}
+			
+			//RYSOWANIE ŚRODKA CIĘŻKOŚCI CAŁEGO ZBROJENIA			
+			ScatterSeries seria_centroid0 = new ScatterSeries();
+			seria_centroid0.MarkerStroke = OxyColors.Black;
+			seria_centroid0.MarkerType = MarkerType.Plus;
+			seria_centroid0.MarkerStrokeThickness = 3.5;
+
+			ScatterPoint pointC0 = new ScatterPoint(Section.Centroid.X, Section.Centroid.Y);
+			pointC0.Size = 10;
+			seria_centroid0.Points.Add(pointC0);
+
+			seria_centroid0.Title = "Section centroid";
+			sectionPlotModel.Series.Add(seria_centroid0);
+			
+			//RYSOWANIE GŁÓWNYCH OSI BEZWŁADNOŚCI PRZEKROJU
+			
+			
+			//RYSOWANIE ŚRODKÓW CIĘŻKOŚCI PARTÓW
+			foreach (var part in Section.Parts) {
+				ScatterSeries seria_centroids = new ScatterSeries();
+				seria_centroids.MarkerStroke = Kolory_Centroids[Section.Parts.IndexOf(part)];
+				seria_centroids.MarkerType = MarkerType.Plus;
+				seria_centroids.MarkerStrokeThickness = 2.5;
+
+				ScatterPoint pointC = new ScatterPoint(part.Centroid.X, part.Centroid.Y);
+				pointC.Size = 7.5;
+				seria_centroids.Points.Add(pointC);
+
+				seria_centroids.Title = part.Name + " - centroid";
+				sectionPlotModel.Series.Add(seria_centroids);
+			}
+
+			//PRZYPISANIE MODELU
+			SectionPlotModel = sectionPlotModel;			
+		}
+        
+        private void DrawSelectedMember(TS_region member){
+
+            if (member is TS_part) {
+                TS_part part = member as TS_part;
+                TS_contour contour = part.Contour;
+
+                LineSeries seria_member = new LineSeries();
+                seria_member.Color = OxyColors.Magenta;
+                seria_member.StrokeThickness = 2 * generalThickness;
+                seria_member.LineStyle = LineStyle.Dash;
+
+                foreach (var side in contour.Sides) {
+                    DataPoint point1 = new DataPoint(side.StartPoint.X, side.StartPoint.Y);
+                    seria_member.Points.Add(point1);
+                    DataPoint point2 = new DataPoint(side.EndPoint.X, side.EndPoint.Y);
+                    seria_member.Points.Add(point2);
                 }
-                seria.Title = reoGroup.Name;
-                sectionPlotModel.Series.Add(seria);
+                SectionPlotModel.Series.Add(seria_member);
+                _currentSeries = seria_member;
+                return;
             }
 
-            {
-                OxyColor randomColor;
-                rand.NextBytes(byteColor);
-                randomColor = OxyColor.FromArgb(255, byteColor[0], byteColor[1], byteColor[2]);
+            if (member is TS_contour || member is TS_void) {
+        		TS_contour contour = member as TS_contour;
+        		
+        		AreaSeries seria_member = new AreaSeries();
+				seria_member.Color = OxyColors.Magenta;
+				seria_member.StrokeThickness = 2 * generalThickness;
+			
+        		foreach (var side in contour.Sides) {
+					DataPoint point1 = new DataPoint(side.StartPoint.X, side.StartPoint.Y);
+					seria_member.Points.Add(point1);
+					DataPoint point2 = new DataPoint(side.EndPoint.X, side.EndPoint.Y);
+					seria_member.Points.Add(point2);
+				}
+				SectionPlotModel.Series.Add(seria_member);
+				_currentSeries = seria_member;
+				return;
+        	} 
+        	if (member is TS_reinforcement) {
+				TS_reinforcement reo = member as TS_reinforcement;
+				
+				ScatterSeries seria_reo = new ScatterSeries();
+				seria_reo.MarkerFill = OxyColors.Magenta;
+				seria_reo.MarkerType = MarkerType.Circle;
+                
+				foreach (var bar in reo.Bars) {
+					ScatterPoint point = new ScatterPoint(bar.Coordinates.X, bar.Coordinates.Y);
+					point.Size = bar.Diameter * 100;
+					seria_reo.Points.Add(point);
+				}
+				SectionPlotModel.Series.Add(seria_reo);
+				_currentSeries = seria_reo;
+				return;
+			}
 
-                ScatterSeries seria = new ScatterSeries();
-                seria.MarkerStroke = randomColor;
-                seria.MarkerType = MarkerType.Plus;
-                seria.MarkerStrokeThickness = 3.5;
 
-                ScatterPoint point = new ScatterPoint(Section.Centroid.X, Section.Centroid.Y);
-                point.Size = 10;
-                seria.Points.Add(point);
-
-                seria.Title = "Section centroid";
-                sectionPlotModel.Series.Add(seria);
-
-                //FunctionSeries functionSeries1 = new FunctionSeries();
-                // dopracowac jeszcze to
-
-                foreach (var part in Section.Parts) {
-                    rand.NextBytes(byteColor);
-                    randomColor = OxyColor.FromArgb(255, byteColor[0], byteColor[1], byteColor[2]);
-
-                    ScatterSeries seria1 = new ScatterSeries();
-                    seria1.MarkerStroke = randomColor;
-                    seria1.MarkerType = MarkerType.Plus;
-                    seria1.MarkerStrokeThickness = 2.5;
-
-                    ScatterPoint point1 = new ScatterPoint(part.Centroid.X, part.Centroid.Y);
-                    point1.Size = 7.5;
-                    seria1.Points.Add(point1);
-
-                    seria1.Title = part.Name + " - centroid";
-                    sectionPlotModel.Series.Add(seria1);
-                }
-            }
-
-            SectionPlotModel = sectionPlotModel;
         }
         
         #region InotifyPropertyChanged Members
@@ -232,6 +270,19 @@ namespace SectionDesigner.ViewModels
 
         private void PlotView_PropertyChanged(object sender, EventArgs e) {
             DrawSection();
+        }
+        
+        private void SelectedContour_PropertyChanged(object sender, EventArgs e) {
+            if (sender is TS_part)
+                SelectedContour = sender as TS_part;
+            else if (sender is TS_contour)
+                SelectedContour = sender as TS_contour;
+            else if (sender is TS_reinforcement)
+                SelectedContour = sender as TS_reinforcement;
+
+            if (SelectedContour != null) {
+                DrawSelectedMember(SelectedContour);
+                OnPropertyChanged("SectionPlotModel"); }
         }
         #endregion
     }

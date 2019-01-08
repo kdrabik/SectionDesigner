@@ -54,7 +54,7 @@ namespace Majstersztyk
 				OnParametersChanged();
             }
         }
-
+        
         public override string TypeOf { get { return typeOf; } }
         private new readonly string typeOf = "Section";
 

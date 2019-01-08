@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Collections.ObjectModel;
+using Majstersztyk.TS_materials;
 
 namespace Majstersztyk
 {
@@ -20,6 +21,28 @@ namespace Majstersztyk
         
     	public static TS_section ReadSection(){
 			return new TS_section(ReadParts(pathSec), ReadReoGroups(pathSec));
+    	}
+    	
+    	public static TS_section CreateInitiateSection(){
+			List<TS_point> PointsC0 = new List<TS_point>{ new TS_point() };
+			TS_contour Contour0 = new TS_contour(PointsC0);
+			
+			List<TS_point> PointsV0 = new List<TS_point>{ new TS_point() };
+			TS_void Void0 = new TS_void(PointsV0);
+			Void0.Name = "new Void";
+			List<TS_void> Voids0 = new List<TS_void>() { Void0 };
+			
+			TS_part Part0 = new TS_part(new TS_mat_universal(), Contour0, Voids0);
+			Part0.Name = "Part1";
+			List<TS_part> Parts0 = new List<TS_part>(){ Part0 };
+			
+			TS_bar Bar0 = new TS_bar(new TS_point(), Double.NaN);
+			List<TS_bar> Bars0 = new List<TS_bar>() { Bar0 };
+			TS_reinforcement Reo0 = new TS_reinforcement(Bars0, new TS_mat_universal());
+			List<TS_reinforcement> Reos0 = new List<TS_reinforcement>(){ Reo0 };
+			
+			TS_section Section0 = new TS_section(Parts0, Reos0);
+			return Section0;
     	}
     	
         private static List<TS_point> ReadPoints(string pathToTheFile){

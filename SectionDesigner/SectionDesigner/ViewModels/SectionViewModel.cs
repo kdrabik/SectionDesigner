@@ -16,11 +16,13 @@
 
         public SectionViewModel() {
 			Section = Creator.ReadSection();
+			//Section = Creator.CreateInitiateSection();
 			//_Selected = SectionProp.SelectedContent as TS_part;
 			UpdateCommand = new SectionUpdateCommand(this);
             OxyPreview = new OxyPlotViewModel();
             //OxyPreview.AddPart(_Section.Parts[0]);
             OxyPreview.Section = Section;
+			OxyPreview.SelectedContour = Section.Parts[0].Voids[1];
         }
 		
 		public bool CanUpdate {

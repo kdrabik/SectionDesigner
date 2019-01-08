@@ -19,6 +19,8 @@ namespace Majstersztyk
 	{
         public TS_void(List<TS_point> vertices) : base(vertices) { }
         
+		public TS_void() : base() { Name = "new Void"; }
+        
         public override string TypeOf { get { return typeOf; } }
         private new readonly string typeOf = "Void";
 

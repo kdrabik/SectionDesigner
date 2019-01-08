@@ -86,8 +86,8 @@
                     </StackPanel>
                     
                     <TabControl
-				x:Name="SectionProp" ItemsSource="{Binding VM1.Section.Parts}">
-                        <!--SelectedItem="{Binding VM1.Selected_Part}"-->
+				x:Name="SectionProp" ItemsSource="{Binding VM1.Section.Parts}"
+                        SelectedItem="{Binding SelectedMember, Mode=TwoWay}">
                         <TabControl.ItemTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
@@ -103,8 +103,8 @@
                                     <Label Content="{Binding Centroid, Mode=OneWay}"/>
                                     <TabControl
                             x:Name="PartProp" 
-                            ItemsSource="{Binding GeometryComponents}">
-                                        <!--SelectedItem="{Binding VM1.Selected_Contour}">-->
+                            ItemsSource="{Binding GeometryComponents}"
+                            SelectedItem="{Binding SelectedMember, Mode=TwoWay}">
                                         <TabControl.ItemTemplate>
                                             <DataTemplate>
                                                 <StackPanel Orientation="Horizontal">

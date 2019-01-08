@@ -47,7 +47,7 @@ namespace Majstersztyk
         public override string TypeOf { get { return typeOf; } }
         private new readonly string typeOf = "Contour";
         
-        protected TS_contour() {
+        public TS_contour() {
             Vertices = new ObservableList<TS_point>();
             Name = "Contour";
             CalcProperties();

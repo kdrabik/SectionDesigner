@@ -100,7 +100,14 @@ namespace Majstersztyk
         
         public virtual string TypeOf {get{return typeOf;}}
 		protected string typeOf;
-
+      
+        protected TS_region _SelectedMember;
+        public TS_region SelectedMember{
+        	get{ return _SelectedMember;}
+        	set{
+                _SelectedMember = value;
+        		OnSelectedMemberChanged();} }
+		
         #endregion
 
         #region Calculation Methods
@@ -215,5 +222,16 @@ namespace Majstersztyk
             CalcProperties();
 			OnParametersChanged();
         }
+        
+        public event EventHandler SelectedMemberChanged;
+
+        protected void OnSelectedMemberChanged() {
+            EventHandler handler = SelectedMemberChanged;
+
+            if (handler != null) {
+                handler(this, new EventArgs());
+            }
+        }
+
     }
 }
