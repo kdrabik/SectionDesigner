@@ -47,6 +47,13 @@ namespace Majstersztyk
             Diameter = diameter;
 			//SteelClass = steel;
         }
+        
+        public TS_bar()//, TS_materials.TS_steel_rf steel)
+        {
+        	this.Coordinates = new TS_point();
+            Diameter = 0.0;
+			//SteelClass = steel;
+        }
 
         private double CalcArea()
         {

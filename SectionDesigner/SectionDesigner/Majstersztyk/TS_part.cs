@@ -87,6 +87,13 @@ namespace Majstersztyk
                 OnPropertyChanged();
             }
         }
+        
+        protected TS_region _SelectedContOrVoid;
+        public TS_region SelectedContOrVoid{
+        	get{ return _SelectedContOrVoid;}
+        	set{
+                _SelectedContOrVoid = value;
+        		OnSelectedMemberChanged();} }
 
         public override string TypeOf { get { return typeOf; } }
         private new readonly string typeOf = "Part";

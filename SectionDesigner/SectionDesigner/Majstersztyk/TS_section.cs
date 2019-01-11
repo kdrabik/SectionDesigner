@@ -55,6 +55,14 @@ namespace Majstersztyk
             }
         }
         
+        protected TS_region _SelectedPartOrReo;
+        public TS_region SelectedPartOrReo{
+        	get{ return _SelectedPartOrReo;}
+        	set{
+                _SelectedPartOrReo = value;
+        		OnSelectedMemberChanged();} }
+		
+        
         public override string TypeOf { get { return typeOf; } }
         private new readonly string typeOf = "Section";
 

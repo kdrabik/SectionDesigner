@@ -22,7 +22,7 @@
             OxyPreview = new OxyPlotViewModel();
             //OxyPreview.AddPart(_Section.Parts[0]);
             OxyPreview.Section = Section;
-			OxyPreview.SelectedContour = Section.Parts[0].Voids[1];
+			//OxyPreview.SelectedContour = Section.Parts[0].Voids[1];
         }
 		
 		public bool CanUpdate {
