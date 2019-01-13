@@ -17,12 +17,12 @@ namespace Majstersztyk
             get { return _Coordinates; }
             set {
                 if (_Coordinates != null)
-                    _Coordinates.ParametersChanged -= OnContainedElementChanged;
+                    _Coordinates.ParametersChanged -= ContainedElementParametersChanged;
 
                 _Coordinates = value;
 
                 if (_Coordinates != null) {
-                    _Coordinates.ParametersChanged += OnContainedElementChanged;
+                    _Coordinates.ParametersChanged += ContainedElementParametersChanged;
                 }
                 OnPropertyChanged();
 				OnParametersChanged();
@@ -37,7 +37,7 @@ namespace Majstersztyk
                 OnPropertyChanged();
 				OnParametersChanged();
             } }
-
+        
 		public double Area { get { return CalcArea(); }}
 		//public TS_materials.TS_steel_rf SteelClass { get; set; }
 
@@ -48,11 +48,10 @@ namespace Majstersztyk
 			//SteelClass = steel;
         }
         
-        public TS_bar()//, TS_materials.TS_steel_rf steel)
+        public TS_bar()
         {
         	this.Coordinates = new TS_point();
             Diameter = 0.0;
-			//SteelClass = steel;
         }
 
         private double CalcArea()
@@ -84,7 +83,7 @@ namespace Majstersztyk
         }
         #endregion
         
-        public void OnContainedElementChanged(object sender, EventArgs e){
+        public void ContainedElementParametersChanged(object sender, EventArgs e){
 			OnPropertyChanged("Diameter");
 			OnParametersChanged();
         }

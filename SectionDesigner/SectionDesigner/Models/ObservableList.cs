@@ -14,7 +14,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace SectionDesigner
+namespace SectionDesigner.Models
 {
     /// <summary>
     /// Description of ObservableList.
@@ -28,7 +28,7 @@ namespace SectionDesigner
     
     public interface INotifyParametersChanged : INotifyPropertyChanged{
     	event EventHandler ParametersChanged;
-		void OnContainedElementChanged(object sender, EventArgs e);
+		void OnContainedElementParametersChanged(object sender, EventArgs e);
     }
 
     public class ObservableList<T> : List<T>, IObservableList<T>, INotifyPropertyChanged where T : INotifyParametersChanged
@@ -65,7 +65,7 @@ namespace SectionDesigner
 
         public new void Add(T item) {
             base.Add(item);
-            item.ParametersChanged += OnContainedElementChanged;
+            item.ParametersChanged += ContainedElementParametersChanged;
             item.PropertyChanged += ContainedElementChanged;
             /*NotifyCollectionChangedEventArgs e =
                 new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, item);
@@ -76,7 +76,7 @@ namespace SectionDesigner
         public new void AddRange(IEnumerable<T> collection) {
             base.AddRange(collection);
 			foreach (var item in collection) {
-				item.ParametersChanged += OnContainedElementChanged;
+				item.ParametersChanged += ContainedElementParametersChanged;
 				item.PropertyChanged += ContainedElementChanged;
 			}
             /*NotifyCollectionChangedEventArgs e =
@@ -87,7 +87,7 @@ namespace SectionDesigner
 
         public new void Clear() {
 			foreach (var item in this) {
-				item.ParametersChanged -= OnContainedElementChanged;
+				item.ParametersChanged -= ContainedElementParametersChanged;
             	item.PropertyChanged -= ContainedElementChanged;
 			}
             base.Clear();
@@ -99,7 +99,7 @@ namespace SectionDesigner
 
         public new void Insert(int i, T item) {
             base.Insert(i, item);
-            item.ParametersChanged += OnContainedElementChanged;
+            item.ParametersChanged += ContainedElementParametersChanged;
             item.PropertyChanged += ContainedElementChanged;
             /*NotifyCollectionChangedEventArgs e =
                 new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, item);
@@ -109,7 +109,7 @@ namespace SectionDesigner
         public new void InsertRange(int i, IEnumerable<T> collection) {
             base.InsertRange(i, collection);
 			foreach (var item in collection) {
-				item.ParametersChanged += OnContainedElementChanged;
+				item.ParametersChanged += ContainedElementParametersChanged;
             item.PropertyChanged += ContainedElementChanged;
 			}
             /*NotifyCollectionChangedEventArgs e =
@@ -119,7 +119,7 @@ namespace SectionDesigner
 
         public new void Remove(T item) {
             base.Remove(item);
-            item.ParametersChanged -= OnContainedElementChanged;
+            item.ParametersChanged -= ContainedElementParametersChanged;
             item.PropertyChanged -= ContainedElementChanged;
             /*NotifyCollectionChangedEventArgs e =
                 new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, item);
@@ -129,7 +129,7 @@ namespace SectionDesigner
         public new void RemoveAll(Predicate<T> match) {
             List<T> backup = FindAll(match);
 			foreach (var item in backup) {
-				item.ParametersChanged -= OnContainedElementChanged;
+				item.ParametersChanged -= ContainedElementParametersChanged;
 				item.PropertyChanged -= ContainedElementChanged;
 			}
             base.RemoveAll(match);
@@ -140,7 +140,7 @@ namespace SectionDesigner
 
         public new void RemoveAt(int i) {
             T backup = this[i];
-            backup.ParametersChanged -= OnContainedElementChanged;
+            backup.ParametersChanged -= ContainedElementParametersChanged;
             backup.PropertyChanged -= ContainedElementChanged;
             base.RemoveAt(i);
             /*NotifyCollectionChangedEventArgs e =
@@ -151,7 +151,7 @@ namespace SectionDesigner
         public new void RemoveRange(int index, int count) {
             List<T> backup = GetRange(index, count);
 			foreach (var item in backup) {
-				item.ParametersChanged -= OnContainedElementChanged;
+				item.ParametersChanged -= ContainedElementParametersChanged;
 				item.PropertyChanged -= ContainedElementChanged;
 			}
             base.RemoveRange(index, count);
@@ -164,7 +164,7 @@ namespace SectionDesigner
             get { return base[index]; }
             set {
                 T oldValue = base[index];
-                oldValue.ParametersChanged += OnContainedElementChanged;
+                oldValue.ParametersChanged += ContainedElementParametersChanged;
 				oldValue.PropertyChanged += ContainedElementChanged;
                 /*NotifyCollectionChangedEventArgs e =
                     new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Replace, value, oldValue);
@@ -181,6 +181,7 @@ namespace SectionDesigner
         protected void OnCollectionChanged(NotifyCollectionChangedEventArgs e) {
             Unsubscribe(e.OldItems);
             Subscribe(e.NewItems);
+            
             /*if (IsNotifying && CollectionChanged != null)
                 try {
                     CollectionChanged(this, e);
@@ -217,7 +218,7 @@ namespace SectionDesigner
             OnPropertyChanged(e.PropertyName);
         }
         
-        private void OnContainedElementChanged(object sender, EventArgs e) {
+        private void ContainedElementParametersChanged(object sender, EventArgs e) {
             OnParametersChanged();
         }
 
@@ -230,7 +231,7 @@ namespace SectionDesigner
         private void Subscribe(IList iList) {
             if (iList != null) {
 				foreach (T element in iList) {
-					element.ParametersChanged += OnContainedElementChanged;
+					element.ParametersChanged += ContainedElementParametersChanged;
 					element.PropertyChanged += ContainedElementChanged;
 				}
             }
@@ -239,7 +240,7 @@ namespace SectionDesigner
         private void Unsubscribe(IList iList) {
             if (iList != null) {
 				foreach (T element in iList) {
-					element.ParametersChanged -= OnContainedElementChanged;
+					element.ParametersChanged -= ContainedElementParametersChanged;
 					element.PropertyChanged += ContainedElementChanged;
 				}
             }

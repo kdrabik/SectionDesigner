@@ -56,6 +56,12 @@ namespace SectionDesigner.ViewModels
 			get{ return _SelectedContour; }
 			set {_SelectedContour = value;}
 		}
+
+        private TS_region _SelectedPart;
+		public TS_region SelectedPart {
+			get{ return _SelectedPart; }
+			set {_SelectedPart = value;}
+		}
         		
         		//DrawSelectedMember(_SelectedContour);
         		//OnPropertyChanged();
@@ -192,8 +198,10 @@ namespace SectionDesigner.ViewModels
         
         private List<Series> DrawSelectedMember(TS_region selectedMember)
         {
-			if (selectedMember != null) SelectedContour = selectedMember;
-			else return null;
+            if (selectedMember != null) {
+                SelectedContour = selectedMember.SelectedMember;
+                SelectedPart = selectedMember;
+            } else return null;
         	
 			OxyColor selectedColor = OxyColors.Magenta;
 			

@@ -72,12 +72,12 @@ namespace Majstersztyk
             get { return _Point1; }
             set { 
             	if (_Point1 != null)
-            		_Point1.ParametersChanged -= OnContainedElementChanged;
+            		_Point1.ParametersChanged -= ContainedElementParametersChanged;
             	
             	_Point1 = value;
             	
             	if (_Point1 != null) {
-					_Point1.ParametersChanged += OnContainedElementChanged;
+					_Point1.ParametersChanged += ContainedElementParametersChanged;
             	}
             	
                 OnPropertyChanged();
@@ -90,12 +90,12 @@ namespace Majstersztyk
             get { return _Point2; }
             set { 
             	if (_Point2 != null)
-            		_Point2.ParametersChanged -= OnContainedElementChanged;
+            		_Point2.ParametersChanged -= ContainedElementParametersChanged;
             	
             	_Point2 = value;
             	
             	if (_Point2 != null) {
-					_Point2.ParametersChanged += OnContainedElementChanged;
+					_Point2.ParametersChanged += ContainedElementParametersChanged;
             	}
             	
                 OnPropertyChanged();
@@ -282,10 +282,10 @@ namespace Majstersztyk
         }
         #endregion
         
-		void OnContainedElementChanged(object sender, EventArgs args)
+		void ContainedElementParametersChanged(object sender, EventArgs args)
 		{
 			ReCalcMe();
-			OnParametersChanged();
+			//OnParametersChanged();
 		}
     }
 }

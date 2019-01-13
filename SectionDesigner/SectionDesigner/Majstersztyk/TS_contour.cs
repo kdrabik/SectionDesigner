@@ -21,9 +21,9 @@ namespace Majstersztyk
 	/// </summary>
 	public class TS_contour : TS_region
     {
-        private ObservableList<TS_point> _Vertices;
+        private ObservableCollectionEx<TS_point> _Vertices;
 
-        public ObservableList<TS_point> Vertices {
+        public ObservableCollectionEx<TS_point> Vertices {
             get { return _Vertices; }
             set {
                 if (_Vertices != null) {
@@ -48,7 +48,7 @@ namespace Majstersztyk
         private new readonly string typeOf = "Contour";
         
         public TS_contour() {
-            Vertices = new ObservableList<TS_point>();
+            Vertices = new ObservableCollectionEx<TS_point>();
             Name = "Contour";
             CalcProperties();
         }
@@ -157,7 +157,7 @@ namespace Majstersztyk
             return (currentVertex + 1) % _Vertices.Count;
         }
 
-        protected static List<TS_side> GenerateSides(ObservableList<TS_point> points)
+        protected static List<TS_side> GenerateSides(ObservableCollectionEx<TS_point> points)
         {
             List<TS_side> sides = new List<TS_side>();
             for (int i = 0; i < points.Count; i++)
@@ -194,7 +194,7 @@ namespace Majstersztyk
 			}
 			
 			TS_line horLine = new TS_line(0, point.Y);
-			ObservableList<TS_point> horPoints = new ObservableList<TS_point>();
+			ObservableCollectionEx<TS_point> horPoints = new ObservableCollectionEx<TS_point>();
 			
 			foreach (var side in Sides) {
 				TS_point pointX = side.CrossedPoint(horLine);

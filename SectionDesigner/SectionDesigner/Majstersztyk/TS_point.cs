@@ -18,8 +18,8 @@ namespace Majstersztyk
 	/// <summary>
 	/// Description of TS_point
 	/// </summary>
-	public class TS_point:INotifyParametersChanged
-	{
+	public class TS_point: SectionDesigner.INotifyParametersChanged
+    {
         private double _X;
 
         public double X {
@@ -112,8 +112,8 @@ namespace Majstersztyk
         }
         #endregion
          
-        public virtual void OnContainedElementChanged(object sender, EventArgs args) {
-			OnParametersChanged();
+        public virtual void ContainedElementParametersChanged(object sender, EventArgs args) {
+			//OnParametersChanged();
         }
         
         #region Equals and GetHashCode implementation 

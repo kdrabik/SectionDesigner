@@ -59,7 +59,7 @@ namespace Majstersztyk.TS_materials
         }
         #endregion
         
-        public void OnContainedElementChanged(object sender, EventArgs e){
+        public void ContainedElementParametersChanged(object sender, EventArgs e){
         	
         }
     }

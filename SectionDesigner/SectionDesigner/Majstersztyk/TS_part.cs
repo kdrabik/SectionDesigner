@@ -21,9 +21,9 @@ namespace Majstersztyk
 
     public class TS_part : TS_region
     {
-        private ObservableList<TS_void> _Voids;
+        private ObservableCollectionEx<TS_void> _Voids;
 
-        public ObservableList<TS_void> Voids {
+        public ObservableCollectionEx<TS_void> Voids {
             get { return _Voids; }
             set {
                 if (_Voids != null)
@@ -75,12 +75,12 @@ namespace Majstersztyk
             }
         }
 
-        private ObservableList<TS_contour> _GeometryComponents;
+        private ObservableCollectionEx<TS_contour> _GeometryComponents;
 
-        public ObservableList<TS_contour> GeometryComponents{
+        public ObservableCollectionEx<TS_contour> GeometryComponents{
             get { return _GeometryComponents; }
             private set {
-                ObservableList<TS_contour> geomComp = new ObservableList<TS_contour>();
+                ObservableCollectionEx<TS_contour> geomComp = new ObservableCollectionEx<TS_contour>();
                 geomComp.Add(_Contour);
                 geomComp.AddRange(_Voids);
                 _GeometryComponents = geomComp;
@@ -101,7 +101,7 @@ namespace Majstersztyk
         public TS_part(TS_materials.TS_material material, TS_contour contour, List<TS_void> voids)
         {
 			Material = material;
-            Voids = new ObservableList<TS_void>();
+            Voids = new ObservableCollectionEx<TS_void>();
             Contour = contour;
             Voids.AddRange(voids);
             GeometryComponents = null;

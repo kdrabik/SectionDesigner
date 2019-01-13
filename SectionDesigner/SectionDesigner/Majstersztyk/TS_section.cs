@@ -19,9 +19,9 @@ namespace Majstersztyk
 	/// </summary>
 	public class TS_section : TS_region
 	{
-        private ObservableList<TS_part> _Parts;
+        private ObservableCollectionEx<TS_part> _Parts;
 
-        public ObservableList<TS_part> Parts {
+        public ObservableCollectionEx<TS_part> Parts {
             get { return _Parts; }
             set {
                 if (_Parts != null)
@@ -37,9 +37,9 @@ namespace Majstersztyk
             }
         }
 
-        private ObservableList<TS_reinforcement> _Reinforcement;
+        private ObservableCollectionEx<TS_reinforcement> _Reinforcement;
 
-        public ObservableList<TS_reinforcement> Reinforcement {
+        public ObservableCollectionEx<TS_reinforcement> Reinforcement {
             get { return _Reinforcement; }
             set {
                 if (_Reinforcement != null)
@@ -67,8 +67,8 @@ namespace Majstersztyk
         private new readonly string typeOf = "Section";
 
         public TS_section() {
-            Parts = new ObservableList<TS_part>();
-            Reinforcement = new ObservableList<TS_reinforcement>();
+            Parts = new ObservableCollectionEx<TS_part>();
+            Reinforcement = new ObservableCollectionEx<TS_reinforcement>();
             Name = "Section_1";
         }
 				

@@ -218,7 +218,7 @@ namespace Majstersztyk
         }
         #endregion
         
-        public virtual void OnContainedElementChanged(object sender, EventArgs args) {
+        public virtual void ContainedElementParametersChanged(object sender, EventArgs args) {
             CalcProperties();
 			OnParametersChanged();
         }

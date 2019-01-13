@@ -11,9 +11,9 @@ namespace Majstersztyk
 {
     public class TS_reinforcement:TS_region
     {
-        private ObservableList<TS_bar> _Bars;
+        private ObservableCollectionEx<TS_bar> _Bars;
 
-        public ObservableList<TS_bar> Bars {
+        public ObservableCollectionEx<TS_bar> Bars {
             get { return _Bars; }
             set {
                 if (_Bars != null) {
@@ -54,7 +54,7 @@ namespace Majstersztyk
         private new readonly string typeOf = "Reinforcement";
 
         public TS_reinforcement() {
-            Bars = new ObservableList<TS_bar>();
+            Bars = new ObservableCollectionEx<TS_bar>();
             Material = null;
             Name = "Reinforcement";
             //CalcProperties();

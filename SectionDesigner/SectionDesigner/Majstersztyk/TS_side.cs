@@ -26,12 +26,12 @@ namespace Majstersztyk
             get { return _StartPoint; }
             set {
                 if (_StartPoint != null)
-                    _StartPoint.ParametersChanged -= OnContainedElementChanged;
+                    _StartPoint.ParametersChanged -= ContainedElementParametersChanged;
                     
                 _StartPoint = value;
                 
                 if (_StartPoint != null) {
-                    _StartPoint.ParametersChanged += OnContainedElementChanged;
+                    _StartPoint.ParametersChanged += ContainedElementParametersChanged;
                 }
 
                 OnPropertyChanged();
@@ -45,12 +45,12 @@ namespace Majstersztyk
             get { return _EndPoint; }
             set {
                 if (_EndPoint != null)
-                    _EndPoint.ParametersChanged -= OnContainedElementChanged;
+                    _EndPoint.ParametersChanged -= ContainedElementParametersChanged;
                     
                 _EndPoint = value;
                 
                 if (_EndPoint != null) {
-                    _EndPoint.ParametersChanged += OnContainedElementChanged;
+                    _EndPoint.ParametersChanged += ContainedElementParametersChanged;
                 }
                 
                 OnPropertyChanged();
@@ -164,8 +164,8 @@ namespace Majstersztyk
         }
         #endregion
         
-        public void OnContainedElementChanged(object sender, EventArgs args) {
-			OnParametersChanged();
+        public void ContainedElementParametersChanged(object sender, EventArgs args) {
+			//OnParametersChanged();
         }
     }
 }
