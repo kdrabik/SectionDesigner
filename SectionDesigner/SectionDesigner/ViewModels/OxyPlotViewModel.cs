@@ -54,13 +54,17 @@ namespace SectionDesigner.ViewModels
         private TS_region _SelectedContour;
 		public TS_region SelectedContour {
 			get{ return _SelectedContour; }
-			set {_SelectedContour = value;}
+			set {_SelectedContour = value;
+                UpdateGraph();
+            }
 		}
 
         private TS_region _SelectedPart;
 		public TS_region SelectedPart {
 			get{ return _SelectedPart; }
-			set {_SelectedPart = value;}
+			set {_SelectedPart = value;
+                SelectedContour = (_SelectedPart as TS_part).SelectedContOrVoid;
+            }
 		}
         		
         		//DrawSelectedMember(_SelectedContour);
@@ -196,70 +200,45 @@ namespace SectionDesigner.ViewModels
 			return sectionPlotModel;			
 		}
         
-        private List<Series> DrawSelectedMember(TS_region selectedMember)
-        {
-            if (selectedMember != null) {
-                SelectedContour = selectedMember.SelectedMember;
-                SelectedPart = selectedMember;
-            } else return null;
-        	
+        private List<Series> DrawSelectedMember(TS_part selectedPart, TS_contour selectedContour, TS_reinforcement selectedReinforcement)
+        {	
 			OxyColor selectedColor = OxyColors.Magenta;
-			
-        	if ((selectedMember as TS_part) != null) {
-        		TS_contour contour = ((selectedMember as TS_part).SelectedMember as TS_contour);
-        		AreaSeries seria_cont = new AreaSeries();
-				seria_cont.Color = selectedColor;
-				seria_cont.StrokeThickness = 2 * generalThickness;
-			
-        		foreach (var side in contour.Sides) {
-					DataPoint point1 = new DataPoint(side.StartPoint.X, side.StartPoint.Y);
-					seria_cont.Points.Add(point1);
-					DataPoint point2 = new DataPoint(side.EndPoint.X, side.EndPoint.Y);
-					seria_cont.Points.Add(point2);
-				}
-				
-				TS_contour contour2 = (selectedMember as TS_part).Contour;
-        		LineSeries seria_part = new LineSeries();
-				seria_part.Color = selectedColor;
-				seria_part.StrokeThickness = 2 * generalThickness;
-				seria_part.LineStyle = LineStyle.Dash;
-			
-        		foreach (var side in contour2.Sides) {
-					DataPoint point1 = new DataPoint(side.StartPoint.X, side.StartPoint.Y);
-					seria_part.Points.Add(point1);
-					DataPoint point2 = new DataPoint(side.EndPoint.X, side.EndPoint.Y);
-					seria_part.Points.Add(point2);
-				}
-				
-				//SectionPlotModel.Series.Add(seria_cont);
-				//SectionPlotModel.Series.Add(seria_part);
-				
-				return new List<Series>(){ seria_cont, seria_part};
-				//_currentSeries.Add = seria_part;
-				
-        	}
-			
-			if ((selectedMember as TS_contour) != null) {
-        		TS_contour contour = selectedMember as TS_contour;
-        		AreaSeries seria_cont = new AreaSeries();
-				seria_cont.Color = selectedColor;
-				seria_cont.StrokeThickness = 2 * generalThickness;
-			
-        		foreach (var side in contour.Sides) {
-					DataPoint point1 = new DataPoint(side.StartPoint.X, side.StartPoint.Y);
-					seria_cont.Points.Add(point1);
-					DataPoint point2 = new DataPoint(side.EndPoint.X, side.EndPoint.Y);
-					seria_cont.Points.Add(point2);
-				}
-								
-				//SectionPlotModel.Series.Add(seria_cont);
-				
-				//_currentSeries.Add = seria_part;
-				return new List<Series>(){ seria_cont};
-        	}
+
+            List<Series> listaSerii = new List<Series>();
+            
+            if (selectedPart != null) {
+                TS_contour contour = selectedPart.Contour as TS_contour;
+                LineSeries seria_part = new LineSeries();
+                seria_part.Color = selectedColor;
+                seria_part.StrokeThickness = 2 * generalThickness;
+                seria_part.LineStyle = LineStyle.Dash;
+
+                foreach (var side in contour.Sides) {
+                    DataPoint point1 = new DataPoint(side.StartPoint.X, side.StartPoint.Y);
+                    seria_part.Points.Add(point1);
+                    DataPoint point2 = new DataPoint(side.EndPoint.X, side.EndPoint.Y);
+                    seria_part.Points.Add(point2);
+                }
+                listaSerii.Add(seria_part);
+            }
+
+            if (selectedContour != null) {
+                AreaSeries seria_cont = new AreaSeries();
+                seria_cont.Color = selectedColor;
+                seria_cont.StrokeThickness = 2 * generalThickness;
+
+                foreach (var side in selectedContour.Sides) {
+                    DataPoint point1 = new DataPoint(side.StartPoint.X, side.StartPoint.Y);
+                    seria_cont.Points.Add(point1);
+                    DataPoint point2 = new DataPoint(side.EndPoint.X, side.EndPoint.Y);
+                    seria_cont.Points.Add(point2);
+                }
+                listaSerii.Add(seria_cont);
+            }
+            
         	// to poniżej na pewno do poprawy
-        	if ((selectedMember as TS_part).SelectedMember != null) {
-				TS_reinforcement reo = selectedMember as TS_reinforcement;
+        	if (selectedReinforcement != null) {
+				TS_reinforcement reo = selectedReinforcement;
 				
 				ScatterSeries seria_reo = new ScatterSeries();
 				seria_reo.MarkerFill = selectedColor;
@@ -269,19 +248,17 @@ namespace SectionDesigner.ViewModels
 					ScatterPoint point = new ScatterPoint(bar.Coordinates.X, bar.Coordinates.Y);
 					point.Size = bar.Diameter * 100;
 					seria_reo.Points.Add(point);
-				}
-				//SectionPlotModel.Series.Add(seria_reo);
-				
-				//_currentSeries.Add = seria_reo;
-				return new List<Series>() { seria_reo };
-			}
-			return new List<Series>();
+                }
+                listaSerii.Add(seria_reo);
+            }
+
+			return listaSerii;
         }
         
 		private void UpdateGraph()
 		{				
 			PlotModel model = DrawSection();
-			List<Series> series = DrawSelectedMember(SelectedContour);
+			List<Series> series = DrawSelectedMember(SelectedPart as TS_part, SelectedContour as TS_contour, null);
 			//_currentSeries = series;
 			foreach (var seria in series) {
 				model.Series.Add(seria);
@@ -300,21 +277,21 @@ namespace SectionDesigner.ViewModels
                 handler(this, new PropertyChangedEventArgs(propertyName));
             }
         }
-
+        
         private void PlotView_PropertyChanged(object sender, EventArgs e) {
             UpdateGraph();
         }
         
         private void SelectedContour_PropertyChanged(object sender, EventArgs e) {
-			SelectedContour = sender as TS_region;
-			if (SelectedContour != null) {
+			SelectedContour = (sender as TS_part).SelectedContOrVoid;
+			//if (SelectedContour != null) {
 				/*
         		if (_currentSeries != null)
         			foreach (var serie in _currentSeries) {
 						SectionPlotModel.Series.Remove(serie); }
 				*/
 				UpdateGraph();
-			}
+			//}
         }
         #endregion
     }

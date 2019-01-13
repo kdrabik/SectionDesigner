@@ -28,14 +28,14 @@ namespace Majstersztyk
             set {
                 if (_Vertices != null) {
                     _Vertices.ParametersChanged -= Contour_OnParametersChanged;
-                    //_Vertices.CollectionChanged -= Contour_OnCollectionChanged;
+                    _Vertices.CollectionChanged -= Contour_OnParametersChanged;
                 }
 
                 _Vertices = value;
 
                 if (_Vertices != null) {
                     _Vertices.ParametersChanged += Contour_OnParametersChanged;
-                    //_Vertices.CollectionChanged += Contour_OnCollectionChanged;
+                    _Vertices.CollectionChanged += Contour_OnParametersChanged;
                 }
 
                 OnPropertyChanged();

@@ -99,6 +99,7 @@ namespace SectionDesigner
             base.Remove(item);
             item.ParametersChanged -= ContainedElementParametersChanged;
             item.PropertyChanged -= ContainedElementPropertyChanged;
+            OnParametersChanged();
             /*NotifyCollectionChangedEventArgs e =
                 new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, item);
             OnCollectionChanged(e);*/
@@ -121,6 +122,7 @@ namespace SectionDesigner
             backup.ParametersChanged -= ContainedElementParametersChanged;
             backup.PropertyChanged -= ContainedElementPropertyChanged;
             base.RemoveAt(i);
+            OnParametersChanged();
             /*NotifyCollectionChangedEventArgs e =
                 new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, backup);
             OnCollectionChanged(e);*/

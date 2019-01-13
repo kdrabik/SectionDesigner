@@ -87,7 +87,7 @@
                     
                     <TabControl
 				x:Name="SectionProp" ItemsSource="{Binding VM1.Section.Parts}"
-                        SelectedItem="{Binding SelectedMember, Mode=TwoWay}">
+                        SelectedItem="{Binding VM1.OxyPreview.SelectedPart, Mode=TwoWay}">
                         <TabControl.ItemTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
@@ -104,7 +104,7 @@
                                     <TabControl
                             x:Name="PartProp" 
                             ItemsSource="{Binding GeometryComponents}"
-                            SelectedItem="{Binding SelectedMember, Mode=TwoWay}">
+                            SelectedItem="{Binding SelectedContOrVoid, Mode=TwoWay}">
                                         <TabControl.ItemTemplate>
                                             <DataTemplate>
                                                 <StackPanel Orientation="Horizontal">
