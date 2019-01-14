@@ -38,14 +38,8 @@ namespace SectionDesigner
         public void AddRange(IEnumerable<T> collection) {
             //base.AddRange(collection);
             foreach (var item in collection) {
-                item.ParametersChanged += ContainedElementParametersChanged;
-                item.PropertyChanged += ContainedElementPropertyChanged;
                 this.Add(item);
             }
-            NotifyCollectionChangedEventArgs e =
-                new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, new List<T>(collection));
-
-            OnCollectionChanged(e);
         }
 
         public new void Clear() {
