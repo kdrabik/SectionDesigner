@@ -71,9 +71,16 @@
 						Text="{Binding VM2.Section.SizeComputed, UpdateSourceTrigger=PropertyChanged}"
 						Width="100"
 						RenderTransformOrigin="0,5"></TextBox>
-					<!-- <Button Command ="{Binding UpdateCommand}" IsDefault="{Binding ElementName=InputTextBox, Path=IsKeyboardFocused}">Update</Button> -->
+                        
+                        <!-- <Button Command ="{Binding UpdateCommand}" IsDefault="{Binding ElementName=InputTextBox, Path=IsKeyboardFocused}">Update</Button> -->
 				</Grid>
-			</StackPanel>
+                    <DataGrid ItemsSource="{Binding VM1.Section.Parts, Mode=TwoWay}" AutoGenerateColumns="False" CanUserAddRows="True">
+                        <DataGrid.Columns>
+
+                            <DataGridTextColumn Header="Name" Binding="{Binding Name}" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </StackPanel>
 		</TabItem>
 		<TabItem
 			Header="Section"
